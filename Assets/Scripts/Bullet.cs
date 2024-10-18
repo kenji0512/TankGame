@@ -29,6 +29,13 @@ public class Bullet : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
+        if (other.TryGetComponent<BreakableWall>(out var breakableWall))
+        {
+            breakableWall.Damage(); //壁にダメージを与える
+            CreateHitEffect(); //衝突エフェクトを生成
+            Destroy(gameObject);//弾を墓石
+            return;//ここで処理を終了
+        }
         if (other.TryGetComponent<Character>(out var targetCharacter))
         {
             // プレイヤー用の弾が敵に当たった場合
@@ -46,6 +53,7 @@ public class Bullet : MonoBehaviour
                 Destroy(gameObject); // 弾を破壊
             }
         }
+
     }
     private void CreateHitEffect()
     {
