@@ -13,7 +13,7 @@ public class Bullet : MonoBehaviour
     [SerializeField] private BulletType _type;
     [SerializeField] private float speed = 20f;   // 弾の移動速度
     [SerializeField] private float lifetime = 5f; // 弾の寿命（秒）
-    [SerializeField] public GameObject　_hitEffectprefab;//衝突エフェクトのプレハブ
+    [SerializeField] public GameObject _hitEffectPrefab;//衝突エフェクトのプレハブ
 
     private void Start()
     {
@@ -57,10 +57,10 @@ public class Bullet : MonoBehaviour
     }
     private void CreateHitEffect()
     {
-        if (_hitEffectprefab != null)
+        if (_hitEffectPrefab != null)
         {
             //衝突エフェクトを生成
-            Instantiate(_hitEffectprefab,transform.position,Quaternion.identity);
+            Instantiate(_hitEffectPrefab, transform.position,Quaternion.identity);
         }
     }
     // 新しいメソッドを追加して弾の種類を設定できるようにする

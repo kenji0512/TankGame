@@ -121,7 +121,7 @@ NavMeshSettings:
     preserveTilesOutsideBounds: 0
     debug:
       m_Flags: 0
-  m_NavMeshData: {fileID: 0}
+  m_NavMeshData: {fileID: 23800000, guid: 57dca295fac896048851fb8f00d4dc1d, type: 2}
 --- !u!1 &17140852 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 2797129902795045934, guid: 00f825b659e52674c89009710471cdba, type: 3}
@@ -140,6 +140,29 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   maxHealth: 100
+  player: {fileID: 0}
+--- !u!195 &17140854
+NavMeshAgent:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 17140852}
+  m_Enabled: 1
+  m_AgentTypeID: 0
+  m_Radius: 0.5
+  m_Speed: 3.5
+  m_Acceleration: 8
+  avoidancePriority: 50
+  m_AngularSpeed: 120
+  m_StoppingDistance: 0
+  m_AutoTraverseOffMeshLink: 1
+  m_AutoBraking: 1
+  m_AutoRepath: 1
+  m_Height: 2
+  m_BaseOffset: 0
+  m_WalkableMask: 4294967295
+  m_ObstacleAvoidanceType: 4
 --- !u!1 &69552033
 GameObject:
   m_ObjectHideFlags: 0
@@ -825,7 +848,7 @@ GameObject:
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
+  m_StaticEditorFlags: 8
   m_IsActive: 1
 --- !u!65 &1007728380
 BoxCollider:
@@ -1046,12 +1069,17 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents:
     - {fileID: 2797129902795045923, guid: 00f825b659e52674c89009710471cdba, type: 3}
+    - {fileID: 2797129902795045922, guid: 00f825b659e52674c89009710471cdba, type: 3}
+    - {fileID: 2797129902795045933, guid: 00f825b659e52674c89009710471cdba, type: 3}
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents:
     - targetCorrespondingSourceObject: {fileID: 2797129902795045934, guid: 00f825b659e52674c89009710471cdba, type: 3}
       insertIndex: -1
       addedObject: {fileID: 17140853}
+    - targetCorrespondingSourceObject: {fileID: 2797129902795045934, guid: 00f825b659e52674c89009710471cdba, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 17140854}
     - targetCorrespondingSourceObject: {fileID: 5222398819317732503, guid: 00f825b659e52674c89009710471cdba, type: 3}
       insertIndex: -1
       addedObject: {fileID: 2141750076}
