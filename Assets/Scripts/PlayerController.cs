@@ -17,11 +17,26 @@ public class PlayerController : Character
     }
     void HandlePlayerOne()
     {
-        float moveInput = Input.GetAxis("Vertical"); // W/S
-        float turnInput = Input.GetAxis("Horizontal"); // A/D
+        float moveInput = 0; // W/S
+        float turnInput = 0; // A/D
 
-        MoveTank(moveInput, turnInput);
-
+        // WASD‚É‚æ‚éˆÚ“®
+        if (Input.GetKey(KeyCode.W))
+        {
+            moveInput = 1; // ‘Oi
+        }
+        else if (Input.GetKey(KeyCode.S))
+        {
+            moveInput = -1; // Œã‘Ş
+        }
+        if (Input.GetKey(KeyCode.A))
+        {
+            turnInput = -1; // ¶‰ñ“]
+        }
+        else if (Input.GetKey(KeyCode.D))
+        {
+            turnInput = 1; // ‰E‰ñ“]
+        }
         // ’e‚Ì”­Ë
         if (Input.GetKeyDown(KeyCode.LeftShift))
         {
@@ -40,7 +55,6 @@ public class PlayerController : Character
         {
             moveInput = -1; // ‰º
         }
-
         if (Input.GetKey(KeyCode.RightArrow))
         {
             turnInput = 1; // ‰E
