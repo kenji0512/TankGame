@@ -140,9 +140,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   maxHealth: 100
-  _player: {fileID: 0}
-  _bulletprehub: {fileID: 0}
-  _firePoint: {fileID: 0}
+  _player: {fileID: 1070665788}
+  _bulletprehub: {fileID: 4815300177652869576, guid: 4bea4e61271602d41bf8e93d7ec6ee8a, type: 3}
+  _firePoint: {fileID: 2141750075}
 --- !u!195 &17140854
 NavMeshAgent:
   m_ObjectHideFlags: 0

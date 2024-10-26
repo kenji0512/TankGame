@@ -4,14 +4,62 @@ public class PlayerController : Character
 {
     public float moveSpeed = 5f;     // タンクの移動速度
     public float turnSpeed = 100f;   // タンクの回転速度
+    public GameObject _bulletprefab;
+    public Transform _firePoint;
 
     private void Update()
     {
-        // 前進・後退の入力を取得 (Vertical Axis)
-        float moveInput = Input.GetAxis("Vertical");
-        // 左右回転の入力を取得 (Horizontal Axis)
-        float turnInput = Input.GetAxis("Horizontal");
+        // 1Pの操作 (WASD)
+        HandlePlayerOne();
 
+        // 2Pの操作 (矢印キー)
+        HandlePlayerTwo();
+    }
+    void HandlePlayerOne()
+    {
+        float moveInput = Input.GetAxis("Vertical"); // W/S
+        float turnInput = Input.GetAxis("Horizontal"); // A/D
+
+        MoveTank(moveInput, turnInput);
+
+        // 弾の発射
+        if (Input.GetKeyDown(KeyCode.LeftShift))
+        {
+            Shoot();
+        }
+    }
+    void HandlePlayerTwo()
+    {
+        float moveInput = 0;
+        float turnInput = 0;
+        if (Input.GetKey(KeyCode.UpArrow))
+        {
+            moveInput = 1; // 上
+        }
+        else if (Input.GetKey(KeyCode.DownArrow))
+        {
+            moveInput = -1; // 下
+        }
+
+        if (Input.GetKey(KeyCode.RightArrow))
+        {
+            turnInput = 1; // 右
+        }
+        else if (Input.GetKey(KeyCode.LeftArrow))
+        {
+            turnInput = -1; // 左
+        }
+
+        MoveTank(moveInput, turnInput);
+
+        // 弾の発射
+        if (Input.GetKeyDown(KeyCode.Return))
+        {
+            Shoot();
+        }
+    }
+    private void MoveTank(float moveInput, float turnInput)
+    {
         // 前進・後退の移動処理
         Vector3 moveDirection = transform.forward * moveInput * moveSpeed * Time.deltaTime;
         transform.position += moveDirection;
@@ -20,7 +68,17 @@ public class PlayerController : Character
         float turnAmount = turnInput * turnSpeed * Time.deltaTime;
         transform.Rotate(0f, turnAmount, 0f);
     }
+    private void Shoot()
+    {
+        // 弾を生成して初期位置と方向を設定
+        GameObject bullet = Instantiate(_bulletprefab, _firePoint.position, _firePoint.rotation);
+        Bullet bulletScript = bullet.GetComponent<Bullet>();
 
+        if (bulletScript != null)
+        {
+            bulletScript.SetBulletType(Bullet.BulletType.Player); // プレイヤー用の弾
+        }
+    }
     public override void TakeDamage(int damageAmount = 10)
     {
         base.TakeDamage(damageAmount);
