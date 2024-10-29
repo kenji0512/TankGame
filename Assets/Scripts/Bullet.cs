@@ -31,29 +31,33 @@ public class Bullet : MonoBehaviour
     {
         if (other.TryGetComponent<BreakableWall>(out var breakableWall))
         {
-            breakableWall.Damage(); //•Ç‚Éƒ_ƒ[ƒW‚ğ—^‚¦‚é
-            CreateHitEffect(); //Õ“ËƒGƒtƒFƒNƒg‚ğ¶¬
-            Destroy(gameObject);//’e‚ğ•æÎ
-            return;//‚±‚±‚Åˆ—‚ğI—¹
+            HandleWallCollision(breakableWall);
         }
-        if (other.TryGetComponent<Character>(out var targetCharacter))
+        else if (other.TryGetComponent<Character>(out var targetCharacter))
         {
-            // ƒvƒŒƒCƒ„[—p‚Ì’e‚ª“G‚É“–‚½‚Á‚½ê‡
-            if (_type == BulletType.Player && targetCharacter is Enemy)
-            {
-                targetCharacter.TakeDamage();
-                CreateHitEffect();
-                Destroy(gameObject); // ’e‚ğ”j‰ó
-            }
-            // “G—p‚Ì’e‚ªƒvƒŒƒCƒ„[‚É“–‚½‚Á‚½ê‡
-            else if (_type == BulletType.Enemy && targetCharacter is Player)
-            {
-                CreateHitEffect();
-                targetCharacter.TakeDamage();
-                Destroy(gameObject); // ’e‚ğ”j‰ó
-            }
+            HandleCharacterCollision(targetCharacter);
         }
-
+    }
+    private void HandleWallCollision(BreakableWall breakableWall)
+    {
+        breakableWall.Damage(); // •Ç‚Éƒ_ƒ[ƒW‚ğ—^‚¦‚é
+        CreateHitEffect(); // Õ“ËƒGƒtƒFƒNƒg‚ğ¶¬
+        Destroy(gameObject); // ’e‚ğ”j‰ó
+    }
+    private void HandleCharacterCollision(Character targetCharacter)
+    {
+        if (_type == BulletType.Player && targetCharacter is Enemy)
+        {
+            targetCharacter.TakeDamage();
+            CreateHitEffect();
+            Destroy(gameObject); // ’e‚ğ”j‰ó
+        }
+        else if (_type == BulletType.Enemy && targetCharacter is Player)
+        {
+            targetCharacter.TakeDamage();
+            CreateHitEffect();
+            Destroy(gameObject); // ’e‚ğ”j‰ó
+        }
     }
     private void CreateHitEffect()
     {
