@@ -5,19 +5,11 @@ public class BulletShoot : MonoBehaviour
 {
     public GameObject _bulletpre; // 弾のプレハブ
     public Transform _shootpoint; // 弾を発射する位置
-    [SerializeField] private BulletType _type = BulletType.Player; // 弾の種類（デフォルトはプレイヤー用）
+    [SerializeField] private BulletType _bulletType = BulletType.Player; // 弾の種類（デフォルトはプレイヤー用）
     public GameObject _shootEffectPrefab;
+    private PlayerType _playerType;
 
-    void Update()
-    {
-        // 左クリックなどの入力があったときに弾を発射
-        if (Input.GetButtonDown("Fire1"))
-        {
-            Shoot();
-        }
-    }
-
-    private void Shoot()
+    public void Shoot()
     {
         //発射エフェクトを生成
         if (_shootEffectPrefab != null)
@@ -27,12 +19,9 @@ public class BulletShoot : MonoBehaviour
          
         // 弾を生成して初期位置と方向を設定
         GameObject bullet = Instantiate(_bulletpre, _shootpoint.position, _shootpoint.rotation);
-        Bullet bulletScript = bullet.GetComponent<Bullet>();
-
-        if (bulletScript != null)
+        if (bullet.TryGetComponent<Bullet>(out var bulletScript))
         {
-            bulletScript.SetBulletType(_type); // 弾のタイプを設定（プレイヤー用か敵用か）
+            bulletScript.SetBulletType(_bulletType); // 弾の種類を設定
         }
     }
 }
-

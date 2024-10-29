@@ -1,3 +1,4 @@
+using System.Collections;
 using UnityEngine;
 
 public class PlayerController : Character
@@ -6,6 +7,7 @@ public class PlayerController : Character
     public float _turnSpeed = 100f;   // タンクの回転速度
     public GameObject _bulletprefab;
     public Transform _firePoint;
+    [SerializeField] private BulletShoot _bulletShoot;
     public PlayerType _playerType;
 
     private void Update()
@@ -19,13 +21,40 @@ public class PlayerController : Character
         float turnInput = 1f;
         if (_playerType == PlayerType.Player1)
         {
-            moveInput = Input.GetAxis("Vertical");   // W/Sキーで前後移動
-            turnInput = Input.GetAxis("Horizontal"); // A/Dキーで左右回転
+            if (Input.GetKey(KeyCode.W))
+                moveInput = 1f;
+            else if (Input.GetKey(KeyCode.S))
+                moveInput = -1f;
+            else
+                moveInput = 0;
+            // W/Sキーで前後移動
+
+            if (Input.GetKey(KeyCode.A))
+                turnInput = -1;
+            else if (Input.GetKey(KeyCode.D))
+                turnInput = 1;
+            else
+                turnInput = 0;
+            // A/Dキーで左右回転
         }
+
         else if (_playerType == PlayerType.Player2)
         {
-            moveInput = Input.GetAxis("Vertical2");  // 上/下矢印キーで前後移動
-            turnInput = Input.GetAxis("Horizontal2"); // 左/右矢印キーで左右回転
+            if (Input.GetKey(KeyCode.UpArrow))
+                moveInput = 1f;
+            else if (Input.GetKey(KeyCode.DownArrow))
+                moveInput = -1f;
+            else
+                moveInput = 0;
+            // 上/下矢印キーで前後移動
+
+            if (Input.GetKey(KeyCode.LeftArrow))
+                turnInput = -1;
+            else if (Input.GetKey(KeyCode.RightArrow))
+                turnInput = 1;
+            else
+                turnInput = 0;
+            // 左/右矢印キーで左右回転
         }
 
         // 移動・回転処理を統合
@@ -43,34 +72,32 @@ public class PlayerController : Character
     }
     void HandleShooting()
     {
-        if (_playerType == PlayerType.Player1 && Input.GetKeyDown(KeyCode.LeftShift))
+        if (_playerType == PlayerType.Player1 && Input.GetButtonDown("LeftShift"))
         {
             // Player 1 攻撃
-            Shoot();
+            _bulletShoot.Shoot(); // BulletShoot スクリプトの Shoot メソッドを呼び出す
+            Debug.Log(_playerType + " is shooting!");
         }
-        else if (_playerType == PlayerType.Player2 && Input.GetKeyDown(KeyCode.Return))
+        else if (_playerType == PlayerType.Player2 && Input.GetButtonDown("RightShift"))
         {
             // Player 2 攻撃
-            Shoot();
-        }
-    }
-    private void Shoot()
-    {
-        // 弾を生成して初期位置と方向を設定
-        GameObject bullet = Instantiate(_bulletprefab, _firePoint.position, _firePoint.rotation);
-        Bullet bulletScript = bullet.GetComponent<Bullet>();
-
-        if (bulletScript != null)
-        {
-            bulletScript.SetBulletType(Bullet.BulletType.Player); // プレイヤー用の弾
+            _bulletShoot.Shoot(); // BulletShoot スクリプトの Shoot メソッドを呼び出す
             Debug.Log(_playerType + " is shooting!");
         }
     }
+
     public override void TakeDamage(int damageAmount = 10)
     {
         base.TakeDamage(damageAmount);
     }
-
+    private IEnumerator ShootCoroutine()
+    {
+        while (true) // 永久ループなので適切な条件を設定
+        {
+            _bulletShoot.Shoot();
+            yield return new WaitForSeconds(0.5f); // 0.5秒間隔で発射
+        }
+    }
     protected override void Die()
     {
         base.Die();
