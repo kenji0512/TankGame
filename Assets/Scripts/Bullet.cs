@@ -14,6 +14,7 @@ public class Bullet : MonoBehaviour
     [SerializeField] private float speed = 20f;   // 弾の移動速度
     [SerializeField] private float lifetime = 5f; // 弾の寿命（秒）
     [SerializeField] public GameObject _hitEffectPrefab;//衝突エフェクトのプレハブ
+    [SerializeField] public int damageAmount = 10;//ダメージ量
 
     private void Start()
     {
@@ -71,5 +72,9 @@ public class Bullet : MonoBehaviour
     public void SetBulletType(BulletType type)
     {
         _type = type;
+    }
+    public void SetDamageAmount(int damage)
+    {
+        damageAmount = damage;
     }
 }
