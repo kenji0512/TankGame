@@ -70,18 +70,6 @@ public class PlayerController : Character
         float turnAmount = turnInput * _turnSpeed * Time.deltaTime;
         transform.Rotate(0f, turnAmount, 0f);
     }
-    private void ShootBullet()
-    {
-        // 弾を生成して設定を行う
-        GameObject bulletObject = Instantiate(_bulletPrefab, _firePoint.position, _firePoint.rotation);
-        Bullet bullet = bulletObject.GetComponent<Bullet>();
-
-        // プレイヤーに応じた弾の種類を設定
-        bullet.SetBulletType(_playerType == PlayerType.Player1 ? Bullet.BulletType.Player : Bullet.BulletType.Enemy);
-
-        // 必要に応じて弾のダメージ量を設定（例: 20 ダメージ）
-        bullet.SetDamageAmount(20);
-    }
     void HandleShooting()
     {
         if (_playerType == PlayerType.Player1 && Input.GetButtonDown("LeftShift"))
@@ -98,7 +86,7 @@ public class PlayerController : Character
         }
     }
 
-    public override void TakeDamage(int damageAmount = 10)
+    public override void TakeDamage(int damageAmount)
     {
         base.TakeDamage(damageAmount);
     }
@@ -112,7 +100,8 @@ public class PlayerController : Character
     }
     protected override void Die()
     {
-        base.Die();
-        Debug.Log("Game Over! The player has died.");
+        Debug.Log($"{gameObject.name} has died.");
+        GameManager.Instance.RemovePlayer(this); // GameManagerからプレイヤーを削除
+        base.Die(); // 親クラスのDieメソッドを呼び出して、オブジェクトを破壊
     }
 }

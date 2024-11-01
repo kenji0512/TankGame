@@ -5,23 +5,26 @@ public class BulletShoot : MonoBehaviour
 {
     public GameObject _bulletpre; // 弾のプレハブ
     public Transform _shootpoint; // 弾を発射する位置
-    [SerializeField] private BulletType _bulletType = BulletType.Player; // 弾の種類（デフォルトはプレイヤー用）
     public GameObject _shootEffectPrefab;
-    private PlayerType _playerType;
+    public float shootEffectLifetime = 2f; // 発射エフェクトの寿命（秒）
 
     public void Shoot()
     {
         //発射エフェクトを生成
         if (_shootEffectPrefab != null)
         {
-            Instantiate(_shootEffectPrefab, _shootpoint.position,_shootpoint.rotation);
+            GameObject shootEffect = Instantiate(_shootEffectPrefab, _shootpoint.position, _shootpoint.rotation);
+            Destroy(shootEffect, shootEffectLifetime); // エフェクトを一定時間後に消去
         }
-         
+
         // 弾を生成して初期位置と方向を設定
-        GameObject bullet = Instantiate(_bulletpre, _shootpoint.position, _shootpoint.rotation);
-        if (bullet.TryGetComponent<Bullet>(out var bulletScript))
+        if (_bulletpre != null && _shootpoint != null)
         {
-            bulletScript.SetBulletType(_bulletType); // 弾の種類を設定
+            GameObject bullet = Instantiate(_bulletpre, _shootpoint.position, _shootpoint.rotation);
+        }
+        else
+        {
+            Debug.LogError("Bullet Prefab or Shoot Point is not assigned.");
         }
     }
 }
