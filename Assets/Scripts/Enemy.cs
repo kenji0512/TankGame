@@ -51,10 +51,10 @@ public class Enemy : Character
 
             //íeÇÃéÌóﬁÇê›íË
             Bullet bulletScript = bullet.GetComponent<Bullet>();
-            if (bulletScript != null)
-            {
-                bulletScript.SetBulletType(Bullet.BulletType.Enemy);
-            }
+            //if (bulletScript != null)
+            //{
+            //    bulletScript.SetBulletType(Bullet.BulletType.Enemy);
+            //}
         }
     }
 

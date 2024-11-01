@@ -1,17 +1,16 @@
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement; // シーン管理用
 
 public class GameManager : MonoBehaviour
 {
     public static GameManager Instance { get; private set; }
 
     private bool isGamePaused = false;
-
-    List<Enemy> _enemies = new List<Enemy>();
-
+    private List<PlayerController> _players = new List<PlayerController>(); // プレイヤーリストを追加
     private GameState currentState = GameState.Playing;
 
-    public GameState CurrentStateget { get { return currentState; } }
+    public GameState CurrentState { get { return currentState; } }
     public delegate void GameEvent();
     public event GameEvent OnGameStarted;
     public event GameEvent OnGamePaused;
@@ -19,15 +18,14 @@ public class GameManager : MonoBehaviour
     public event GameEvent OnGameOver;
     private void Awake()
     {
-        // シングルトンパターンの実装
         if (Instance != null && Instance != this)
         {
-            Destroy(gameObject); // 他のインスタンスが存在する場合は破棄
+            Destroy(gameObject);
         }
         else
         {
             Instance = this;
-            DontDestroyOnLoad(gameObject); // シーン間でオブジェクトを維持
+            DontDestroyOnLoad(gameObject);
         }
     }
 
@@ -35,39 +33,42 @@ public class GameManager : MonoBehaviour
     {
         currentState = GameState.Playing;
         isGamePaused = false;
-        Time.timeScale = 1f; // ゲームを再開
-        OnGameStarted.Invoke();
+        Time.timeScale = 1f;
+        OnGameStarted?.Invoke();
         Debug.Log("Game Started!");
     }
 
     public void PauseGame()
     {
-        if (currentState == GameState.Paused) 
+        if (currentState == GameState.Paused)
         {
             Debug.LogWarning("Game is already paused!");
             return;
         }
         currentState = GameState.Paused;
         isGamePaused = true;
-        Time.timeScale = 0f; // ゲームをポーズ
-        OnGamePaused.Invoke();
+        Time.timeScale = 0f;
+        OnGamePaused?.Invoke();
         Debug.Log("Game Paused!");
     }
 
     public void ResumeGame()
     {
+        if (currentState != GameState.Paused) return;
         currentState = GameState.Playing;
         isGamePaused = false;
-        Time.timeScale = 1f; // ゲームを再開   ゲーム内のすべての動きを制御しています
+        Time.timeScale = 1f;
+        OnGameResumed?.Invoke();
         Debug.Log("Game Resumed!");
     }
 
     public void EndGame()
     {
         isGamePaused = true;
-        Time.timeScale = 0f; // ゲームを停止
+        currentState = GameState.GameOver;
+        Time.timeScale = 0f;
+        OnGameOver?.Invoke();
         Debug.Log("Game Over!");
-        // ゲーム終了の処理を追加（例えばリザルト画面への遷移など）
     }
 
     public bool IsGamePaused()
@@ -75,12 +76,29 @@ public class GameManager : MonoBehaviour
         return isGamePaused;
     }
 
-    public void Register(Enemy e)
+    public void RegisterPlayer(PlayerController player)
     {
-        _enemies.Add(e);
+        _players.Add(player);
+        Debug.Log($"Player {player.gameObject.name} joined the game.");
     }
-    public void Remove(Enemy e)
+
+    public void RemovePlayer(PlayerController player)
     {
-        _enemies.Remove(e);
+        _players.Remove(player);
+        Debug.Log($"Player {player.gameObject.name} left the game. Remaining players: {_players.Count}");
+
+        // プレイヤーが1人だけの場合
+        if (_players.Count == 1)
+        {
+            Debug.Log("Only one player remaining. Transitioning to next scene...");
+            TransitionToNextScene(); // 次のシーンに移行
+        }
+        Debug.Log($"Player {player.gameObject.name} left the game. Remaining players: {_players.Count}");
+    }
+
+    private void TransitionToNextScene()
+    {
+        // ここでシーンを移行する（例: "NextScene"という名前のシーンへ）
+        SceneManager.LoadScene("CrearScene");
     }
 }
