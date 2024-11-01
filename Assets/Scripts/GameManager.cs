@@ -98,7 +98,7 @@ public class GameManager : MonoBehaviour
 
     private void TransitionToNextScene()
     {
-        // ここでシーンを移行する（例: "NextScene"という名前のシーンへ）
+        // ここでシーンを移行する（例: "CrearScene"という名前のシーンへ）
         SceneManager.LoadScene("CrearScene");
     }
 }
