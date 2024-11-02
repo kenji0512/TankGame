@@ -79,7 +79,7 @@ public class GameManager : MonoBehaviour
     public void RegisterPlayer(PlayerController player)
     {
         _players.Add(player);
-        Debug.Log($"Player {player.gameObject.name} joined the game.");
+        Debug.Log($"Player {player.gameObject.name} joined the game. Total players: {_players.Count}");
     }
 
     public void RemovePlayer(PlayerController player)
@@ -88,7 +88,7 @@ public class GameManager : MonoBehaviour
         Debug.Log($"Player {player.gameObject.name} left the game. Remaining players: {_players.Count}");
 
         // プレイヤーが1人だけの場合
-        if (_players.Count == 1)
+        if (_players.Count <= 1)
         {
             Debug.Log("Only one player remaining. Transitioning to next scene...");
             TransitionToNextScene(); // 次のシーンに移行
@@ -98,6 +98,8 @@ public class GameManager : MonoBehaviour
 
     private void TransitionToNextScene()
     {
+        Debug.Log("Transitioning to CrearScene...");
+
         // ここでシーンを移行する（例: "CrearScene"という名前のシーンへ）
         SceneManager.LoadScene("CrearScene");
     }
