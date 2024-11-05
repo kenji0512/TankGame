@@ -9,7 +9,12 @@ public class PlayerController : Character
     public Transform _firePoint;
     [SerializeField] private BulletShoot _bulletShoot;
     public PlayerType _playerType;
+    Animator _animator;
 
+    private void Start()
+    {
+        _animator = GetComponentInChildren<Animator>(); // 子オブジェクトから Animator を取得
+    }
     private void Update()
     {
         HandleMovement();
@@ -72,17 +77,27 @@ public class PlayerController : Character
     }
     void HandleShooting()
     {
-        if (_playerType == PlayerType.Player1 && Input.GetButtonDown("LeftShift"))
+        bool isShooting = false;
+        bool isroketShooting = false;
+
+        if (_playerType == PlayerType.Player1 && Input.GetButtonDown("LeftShift") || _playerType == PlayerType.Player1 && Input.GetButtonDown("F"))
         {
             // Player 1 攻撃
             _bulletShoot.Shoot(); // BulletShoot スクリプトの Shoot メソッドを呼び出す
+            isShooting = true;
             Debug.Log(_playerType + " is shooting!");
         }
-        else if (_playerType == PlayerType.Player2 && Input.GetButtonDown("RightShift"))
+        else if (_playerType == PlayerType.Player2 && Input.GetButtonDown("RightShift") || _playerType == PlayerType.Player2 && Input.GetButtonDown("Key.pad0"))
         {
             // Player 2 攻撃
             _bulletShoot.Shoot(); // BulletShoot スクリプトの Shoot メソッドを呼び出す
+            isShooting = true;
             Debug.Log(_playerType + " is shooting!");
+        }
+
+        if (isShooting)
+        {
+            _animator.SetTrigger("shoot");
         }
     }
 
