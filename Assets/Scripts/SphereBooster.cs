@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class SphereBooster : MonoBehaviour
+public class SphereBooster : Bullet
 {
     [SerializeField] private float _forceMagnitude = 10.0f; // 力の大きさ
     [SerializeField] private Vector3 _initialDirection = new Vector3(1.0f, 1.0f, 0f); // 初期射出方向
@@ -11,6 +11,7 @@ public class SphereBooster : MonoBehaviour
 
     void Start()
     {
+        base.Start();
         // 初速度を設定（力の大きさと方向から計算）
         _velocity = _initialDirection.normalized * _forceMagnitude;
 
@@ -18,7 +19,7 @@ public class SphereBooster : MonoBehaviour
         _gravityEffect = new Vector3(0, _gravity, 0);
     }
 
-    void Update()
+    protected override void Update()
     {
         // 重力の影響を加える
         _velocity += _gravityEffect * Time.deltaTime;

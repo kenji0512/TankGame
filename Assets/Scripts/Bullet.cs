@@ -7,19 +7,19 @@ public class Bullet : MonoBehaviour
     [SerializeField] public GameObject _hitEffectPrefab;//衝突エフェクトのプレハブ
     [SerializeField] public int damageAmount = 10;//ダメージ量
 
-    private void Start()
+    protected virtual void Start()
     {
         // 一定時間後に弾を自動で破壊
         Destroy(gameObject, lifetime);
     }
 
-    private void Update()
+    protected virtual void Update()
     {
         // 弾を前方に移動させる
         transform.position += transform.forward * speed * Time.deltaTime;
     }
 
-    private void OnTriggerEnter(Collider other)
+    protected void OnTriggerEnter(Collider other)
     {
         if (other.CompareTag("Player"))
         {
@@ -30,14 +30,22 @@ public class Bullet : MonoBehaviour
             }
             Debug.Log("Bullet hit Player and dealt damage!");
         }
+        else if (other.CompareTag("BreakableWall")) // 壁との衝突処理を追加
+        {
+            var breakableWall = other.GetComponent<BreakableWall>();
+            if (breakableWall != null)
+            {
+                HandleWallCollision(breakableWall);
+            }
+        }
     }
-    private void HandleWallCollision(BreakableWall breakableWall)
+    protected virtual void HandleWallCollision(BreakableWall breakableWall)
     {
         breakableWall.Damage(); // 壁にダメージを与える
         CreateHitEffect(); // 衝突エフェクトを生成
         Destroy(gameObject); // 弾を破壊
     }
-    private void HandleCharacterCollision(Character targetCharacter)
+    protected virtual void HandleCharacterCollision(Character targetCharacter)
     {
         // プレイヤーに当たった場合、ダメージを与える
         targetCharacter.TakeDamage();
@@ -45,7 +53,7 @@ public class Bullet : MonoBehaviour
         Destroy(gameObject); // 弾を破壊
         Debug.Log("Destroy" + gameObject.name);
     }
-    private void CreateHitEffect()
+    protected void CreateHitEffect()
     {
         if (_hitEffectPrefab != null)
         {
