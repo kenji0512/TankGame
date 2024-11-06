@@ -80,24 +80,37 @@ public class PlayerController : Character
         bool isShooting = false;
         bool isroketShooting = false;
 
-        if (_playerType == PlayerType.Player1 && Input.GetButtonDown("LeftShift") || _playerType == PlayerType.Player1 && Input.GetButtonDown("F"))
+        if (_playerType == PlayerType.Player1 && Input.GetButtonDown("LeftShift"))
         {
             // Player 1 攻撃
             _bulletShoot.Shoot(); // BulletShoot スクリプトの Shoot メソッドを呼び出す
             isShooting = true;
             Debug.Log(_playerType + " is shooting!");
         }
-        else if (_playerType == PlayerType.Player2 && Input.GetButtonDown("RightShift") || _playerType == PlayerType.Player2 && Input.GetButtonDown("Key.pad0"))
+        else if (_playerType == PlayerType.Player2 && Input.GetButtonDown("RightShift"))
         {
             // Player 2 攻撃
             _bulletShoot.Shoot(); // BulletShoot スクリプトの Shoot メソッドを呼び出す
             isShooting = true;
             Debug.Log(_playerType + " is shooting!");
+        }else if (_playerType == PlayerType.Player1 && Input.GetKeyDown(KeyCode.F))
+        {
+            isroketShooting = true;
+            _bulletShoot.RoketShoot();
+        }
+        else if (_playerType == PlayerType.Player2 && Input.GetKeyDown(KeyCode.Backslash))
+        {
+            isroketShooting = true;
+            _bulletShoot.RoketShoot();
         }
 
         if (isShooting)
         {
             _animator.SetTrigger("shoot");
+        }
+        if (isroketShooting)
+        {
+            _animator.SetTrigger("roketShoot");
         }
     }
 
