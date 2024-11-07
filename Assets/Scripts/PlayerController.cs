@@ -83,25 +83,25 @@ public class PlayerController : Character
         if (_playerType == PlayerType.Player1 && Input.GetButtonDown("LeftShift"))
         {
             // Player 1 攻撃
-            _bulletShoot.Shoot(); // BulletShoot スクリプトの Shoot メソッドを呼び出す
+            _bulletShoot.Shoot(_playerType); // BulletShoot スクリプトの Shoot メソッドを呼び出す
             isShooting = true;
             Debug.Log(_playerType + " is shooting!");
         }
         else if (_playerType == PlayerType.Player2 && Input.GetButtonDown("RightShift"))
         {
             // Player 2 攻撃
-            _bulletShoot.Shoot(); // BulletShoot スクリプトの Shoot メソッドを呼び出す
+            _bulletShoot.Shoot(_playerType); // BulletShoot スクリプトの Shoot メソッドを呼び出す
             isShooting = true;
             Debug.Log(_playerType + " is shooting!");
         }else if (_playerType == PlayerType.Player1 && Input.GetKeyDown(KeyCode.F))
         {
             isroketShooting = true;
-            _bulletShoot.RoketShoot();
+            _bulletShoot.RoketShoot(_playerType);
         }
         else if (_playerType == PlayerType.Player2 && Input.GetKeyDown(KeyCode.Backslash))
         {
             isroketShooting = true;
-            _bulletShoot.RoketShoot();
+            _bulletShoot.RoketShoot(_playerType);
         }
 
         if (isShooting)
@@ -122,7 +122,7 @@ public class PlayerController : Character
     {
         while (true) // 永久ループなので適切な条件を設定
         {
-            _bulletShoot.Shoot();
+            _bulletShoot.Shoot(_playerType);
             yield return new WaitForSeconds(0.5f); // 0.5秒間隔で発射
         }
     }

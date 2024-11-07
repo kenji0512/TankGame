@@ -121,7 +121,7 @@ NavMeshSettings:
     preserveTilesOutsideBounds: 0
     debug:
       m_Flags: 0
-  m_NavMeshData: {fileID: 23800000, guid: 57dca295fac896048851fb8f00d4dc1d, type: 2}
+  m_NavMeshData: {fileID: 0}
 --- !u!1001 &6992991
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1628,7 +1628,7 @@ Transform:
   m_GameObject: {fileID: 1136516197}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 2.419, z: 1.25}
+  m_LocalPosition: {x: 0, y: 1.85, z: 0.971}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -2286,6 +2286,10 @@ PrefabInstance:
     - target: {fileID: 2797129902795045935, guid: 4a1b02cd8f796dc4c9d5c5afce18d0f6, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3959869847426355815, guid: 4a1b02cd8f796dc4c9d5c5afce18d0f6, type: 3}
+      propertyPath: maxHealth
+      value: 1000
       objectReference: {fileID: 0}
     - target: {fileID: 5132796627348414117, guid: 4a1b02cd8f796dc4c9d5c5afce18d0f6, type: 3}
       propertyPath: m_Size.z

@@ -13,7 +13,7 @@ public class BulletShoot : MonoBehaviour
     public float shootEffectLifetime = 2f; // 発射エフェクトの寿命（秒）
     [SerializeField] private float _delayTime = 0.5f;
 
-    public void Shoot()
+    public void Shoot(PlayerType shooter)
     {
         //発射エフェクトを生成
         if (_shootEffectPrefab != null)
@@ -26,13 +26,18 @@ public class BulletShoot : MonoBehaviour
         if (_bulletpre != null && _shootpoint != null)
         { 
             GameObject bullet = Instantiate(_bulletpre, _shootpoint.position, _shootpoint.rotation);
+            Bullet bulletScript = bullet.GetComponent<Bullet>();
+            if (bulletScript != null)
+            {
+                bulletScript.shooterType = shooter;
+            }
         }
         else
         {
             Debug.LogError("Bullet Prefab or Shoot Point is not assigned.");
         }
     }
-    public void RoketShoot()
+    public void RoketShoot(PlayerType shooter)
     {
         //発射エフェクトを生成
         if (_shootEffectPrefab != null)
@@ -42,10 +47,9 @@ public class BulletShoot : MonoBehaviour
         }
 
         // 発射を遅延させる
-        StartCoroutine(DelayedShoot());
-
+        StartCoroutine(DelayedShoot(shooter));
     }
-    private IEnumerator DelayedShoot()
+    private IEnumerator DelayedShoot(PlayerType shooter)
     {
         // 指定された遅延時間だけ待機
         yield return new WaitForSeconds(_delayTime);
@@ -54,7 +58,7 @@ public class BulletShoot : MonoBehaviour
         if (_roketBulletpre != null && _shootpointR != null)
         {
             GameObject roketBullet = Instantiate(_roketBulletpre, _shootpointR.position, _shootpointR.rotation);
-            roketBullet.GetComponent<SphereBooster>().Initialize(_initialDirection); // 発射方向を渡す
+            roketBullet.GetComponent<SphereBooster>().Initialize(_initialDirection, shooter); // 発射方向を渡す
         }
         else
         {
