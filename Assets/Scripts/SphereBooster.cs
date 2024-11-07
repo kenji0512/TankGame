@@ -19,7 +19,7 @@ public class SphereBooster : Bullet
     //    _gravityEffect = new Vector3(0, _gravity, 0);
     //}
     // 発射位置を渡して初速度を設定
-    public void Initialize(Vector3 initialDirection)
+    public void Initialize(Vector3 initialDirection, PlayerType shooter)
     {
         base.Start();
         // 発射方向（shootPointの向いている方向）を取得して、初速度を設定
@@ -42,7 +42,6 @@ public class SphereBooster : Bullet
     {
         // Gizmoの色を設定
         Gizmos.color = Color.red;
-
         // 射出方向の矢印を描画
         Vector3 arrowEnd = transform.position + _velocity.normalized * _forceMagnitude;
         Gizmos.DrawLine(transform.position, arrowEnd); // 発射方向
