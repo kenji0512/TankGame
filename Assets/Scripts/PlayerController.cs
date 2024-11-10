@@ -11,8 +11,9 @@ public class PlayerController : Character
     public PlayerType _playerType;
     Animator _animator;
 
-    private void Start()
+    protected override void Start()
     {
+        base.Start();
         _animator = GetComponentInChildren<Animator>(); // 子オブジェクトから Animator を取得
     }
     private void Update()

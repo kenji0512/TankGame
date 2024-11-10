@@ -4,7 +4,6 @@ public class Character : MonoBehaviour
 {
     [SerializeField] protected int maxHealth = 100;
     protected int currentHealth;
-    private bool isDamage = false;
 
     protected virtual void Start()
     {
@@ -14,28 +13,20 @@ public class Character : MonoBehaviour
     }
 
     // ダメージを受けたときに呼び出されるメソッド
-    public virtual void TakeDamage(int damageAmount = 1)
+    public virtual void TakeDamage(int damageAmount = 10)
     {
         Debug.Log($"{gameObject.name} before damage: {currentHealth}"); // ダメージ前のHP表示
 
-        if (isDamage)
-        {
-            isDamage = true;
-            currentHealth -= damageAmount;
-            Debug.Log($"{gameObject.name} took {damageAmount} damage. Remaining Health: {currentHealth}");
+        currentHealth -= damageAmount;
+        Debug.Log($"{gameObject.name} took {damageAmount} damage. Remaining Health: {currentHealth}");
 
-            if (currentHealth <= 0)
-            {
-                Die();
-            }
+        if (currentHealth <= 0)
+        {
+            Die();
         }
 
     }
 
-    public void ResetDamageflag()
-    {
-        isDamage = false;
-    }
     // 死亡時に呼び出されるメソッド
     protected virtual void Die()
     {
