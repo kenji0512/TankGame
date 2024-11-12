@@ -10,11 +10,13 @@ public class PlayerController : Character
     [SerializeField] private BulletShoot _bulletShoot;
     public PlayerType _playerType;
     Animator _animator;
+    private Rigidbody _rb;
 
     protected override void Start()
     {
         base.Start();
         _animator = GetComponentInChildren<Animator>(); // 子オブジェクトから Animator を取得
+        _rb = GetComponent<Rigidbody>();
     }
     private void Update()
     {
@@ -70,11 +72,13 @@ public class PlayerController : Character
     {
         // 前進・後退の移動処理
         Vector3 moveDirection = transform.forward * moveInput * _moveSpeed * Time.deltaTime;
-        transform.position += moveDirection;
+        Vector3 newPosition = _rb.position + moveDirection;
+        _rb.MovePosition(newPosition);
 
         // 左右回転の処理
         float turnAmount = turnInput * _turnSpeed * Time.deltaTime;
-        transform.Rotate(0f, turnAmount, 0f);
+        Quaternion turnRotation = Quaternion.Euler(0f, turnAmount, 0f);
+        _rb.MoveRotation(_rb.rotation * turnRotation);
     }
     void HandleShooting()
     {
