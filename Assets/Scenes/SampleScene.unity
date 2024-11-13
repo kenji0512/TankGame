@@ -1300,6 +1300,10 @@ PrefabInstance:
       value: 0.5
       objectReference: {fileID: 0}
     - target: {fileID: 223239186245835037, guid: 00f825b659e52674c89009710471cdba, type: 3}
+      propertyPath: shooterType
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 223239186245835037, guid: 00f825b659e52674c89009710471cdba, type: 3}
       propertyPath: _shootpointR
       value: 
       objectReference: {fileID: 1147566338}
@@ -1452,7 +1456,7 @@ Transform:
   m_GameObject: {fileID: 1147566337}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 2.545, z: 1.5750008}
+  m_LocalPosition: {x: 0, y: 2.82, z: 1.72}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -2029,7 +2033,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3959869847426355815, guid: 4a1b02cd8f796dc4c9d5c5afce18d0f6, type: 3}
       propertyPath: maxHealth
-      value: 1000
+      value: 100
       objectReference: {fileID: 0}
     - target: {fileID: 5132796627348414117, guid: 4a1b02cd8f796dc4c9d5c5afce18d0f6, type: 3}
       propertyPath: m_Size.z
