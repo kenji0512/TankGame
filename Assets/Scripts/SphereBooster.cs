@@ -7,9 +7,10 @@ public class SphereBooster : Bullet
 
     private Vector3 _velocity; // 初速度
     private Vector3 _gravityEffect; // 重力による影響
+   //public PlayerType shooterType;
 
     // 発射位置を渡して初速度を設定
-    public void Initialize(Vector3 initialDirection, PlayerType shooter)
+    public void Initialize(Vector3 initialDirection)
     {
         base.Start();
         // 発射方向（shootPointの向いている方向）を取得して、初速度を設定
@@ -17,6 +18,7 @@ public class SphereBooster : Bullet
 
         // 重力の影響を設定 (Y軸方向にのみ影響)
         _gravityEffect = new Vector3(0, _gravity, 0);
+
     }
 
     protected override void Update()

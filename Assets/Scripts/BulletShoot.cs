@@ -59,7 +59,15 @@ public class BulletShoot : MonoBehaviour
         if (_roketBulletpre != null && _shootpointR != null)
         {
             GameObject roketBullet = Instantiate(_roketBulletpre, _shootpointR.position, _shootpointR.rotation);
-            roketBullet.GetComponent<SphereBooster>().Initialize(_initialDirection, shooter); // ”­ŽË•ûŒü‚ð“n‚·
+            SphereBooster boosterScript = roketBullet.GetComponent<SphereBooster>();
+
+            //roketBullet.GetComponent<SphereBooster>().Initialize(direction, shooter); // ”­ŽË•ûŒü‚ð“n‚·
+            if (boosterScript != null)
+            {
+                boosterScript.Initialize(_initialDirection); // direction ‚ð“n‚·
+                boosterScript.shooterType = shooter;
+                roketBullet.GetComponent<SphereBooster>().shooterType = shooter; // shooterType ‚ð“n‚·
+            }
         }
         else
         {
