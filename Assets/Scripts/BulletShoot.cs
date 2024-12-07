@@ -7,7 +7,7 @@ public class BulletShoot : MonoBehaviour
     public GameObject _roketBulletpre; // 弾のプレハブ
     public Transform _shootpoint; // 弾を発射する位置
     public Transform _shootpointR; // 弾を発射する位置
-    [SerializeField] public Vector3 _initialDirection = new Vector3(1.0f, 1.0f, 0f); // 初期射出方向
+    [SerializeField] Vector3 _initialDirection = new Vector3(1.0f, 1.0f, 0f); // 初期射出方向
     public GameObject _shootEffectPrefab;
     public float shootEffectLifetime = 2f; // 発射エフェクトの寿命（秒）
     [SerializeField] private float _delayTime = 0.5f;
@@ -38,7 +38,7 @@ public class BulletShoot : MonoBehaviour
             Debug.LogError("Bullet Prefab or Shoot Point is not assigned.");
         }
     }
-    public void RoketShoot(PlayerType shooter, Vector3 direction)
+    public void RocketShoot(PlayerType shooter, Vector3 direction)
     {
         //発射エフェクトを生成
         if (_shootEffectPrefab != null)

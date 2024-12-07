@@ -2,46 +2,43 @@ using UnityEngine;
 
 public class Bullet : MonoBehaviour
 {
-    [SerializeField] private float speed = 20f;   // ’e‚ÌˆÚ“®‘¬“x
-    [SerializeField] private float lifetime = 5f; // ’e‚Ìõ–½i•bj
-    [SerializeField] public GameObject _hitEffectPrefab;//Õ“ËƒGƒtƒFƒNƒg‚ÌƒvƒŒƒnƒu
-    [SerializeField] public int damageAmount = 10;//ƒ_ƒ[ƒW—Ê
-    public PlayerType shooterType;// ”­ËÒ‚ÌƒvƒŒƒCƒ„[ƒ^ƒCƒv
+    [SerializeField] private float speed = 20f;   // å¼¾ã®ç§»å‹•é€Ÿåº¦
+    [SerializeField] private float lifetime = 5f; // å¼¾ã®å¯¿å‘½ï¼ˆç§’ï¼‰
+    [SerializeField] private GameObject _hitEffectPrefab; // è¡çªã‚¨ãƒ•ã‚§ã‚¯ãƒˆã®ãƒ—ãƒ¬ãƒãƒ–
+    [SerializeField] private int damageAmount = 10; // ãƒ€ãƒ¡ãƒ¼ã‚¸é‡
+    public PlayerType shooterType; // ç™ºå°„è€…ã®ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ã‚¿ã‚¤ãƒ—
+    private Vector3 _direction;  // å¼¾ã®ç§»å‹•æ–¹å‘
 
     protected virtual void Start()
     {
-        // ˆê’èŠÔŒã‚É’e‚ğ©“®‚Å”j‰ó
+        // ä¸€å®šæ™‚é–“å¾Œã«å¼¾ã‚’è‡ªå‹•ã§ç ´å£Š
         Destroy(gameObject, lifetime);
     }
-    private Vector3 _direction;  // ’e‚ÌˆÚ“®•ûŒü
 
     public void SetDirection(Vector3 direction)
     {
-        _direction = direction;
+        _direction = direction.normalized; // å¼¾ã®ç§»å‹•æ–¹å‘ã‚’æ­£è¦åŒ–
     }
-    protected virtual void Update()
+    private void Update()
     {
-        // ’e‚ğ‘O•û‚ÉˆÚ“®‚³‚¹‚é
+        // å¼¾ã‚’å‰æ–¹ã«ç§»å‹•ã•ã›ã‚‹
+        _direction = _direction.normalized;
         transform.position += _direction * speed * Time.deltaTime;
     }
 
     protected void OnTriggerEnter(Collider other)
     {
-        if (other.GetComponent<PlayerController>() != null)
+        if (other.CompareTag("Player")) // ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ã‚¿ã‚°ã§åˆ¤å®š
         {
-            //var targetCharacter = other.GetComponent<Character>();
-            PlayerController hitPlayer = other.GetComponent<PlayerController>();
-            Debug.Log($"hitPlayer.type : {hitPlayer._playerType}\nshooterType : {shooterType}");
-
-            if (hitPlayer._playerType != shooterType)
+            var hitPlayer = other.GetComponent<PlayerController>(); // ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ãŒã‚¿ã‚°ä»˜ãã§ã‚ã‚Œã°ã‚³ãƒ³ãƒãƒ¼ãƒãƒ³ãƒˆå–å¾—
+            if (hitPlayer != null && hitPlayer._playerType != shooterType)
             {
                 HandleCharacterCollision(hitPlayer);
                 Debug.Log($"Bullet hit {hitPlayer.gameObject.name} and dealt damage! Remaining Health: {hitPlayer.GetCurrentHealth()}");
-                // Õ“Ë‚µ‚½‘Šè‚ª”­ËÒ‚Å‚È‚¢ê‡Aˆ—‚ğs‚¤
-                Destroy(gameObject); // ’e‚ğÁ‹
+                Destroy(gameObject); // å¼¾ã‚’æ¶ˆå»
             }
         }
-        else if (other.CompareTag("BreakableWall")) // •Ç‚Æ‚ÌÕ“Ëˆ—‚ğ’Ç‰Á
+        else if (other.CompareTag("BreakableWall"))
         {
             var breakableWall = other.GetComponent<BreakableWall>();
             if (breakableWall != null)
@@ -53,28 +50,24 @@ public class Bullet : MonoBehaviour
     }
     protected virtual void HandleWallCollision(BreakableWall breakableWall)
     {
-        breakableWall.Damage(); // •Ç‚Éƒ_ƒ[ƒW‚ğ—^‚¦‚é
-        CreateHitEffect(); // Õ“ËƒGƒtƒFƒNƒg‚ğ¶¬
-        Destroy(gameObject); // ’e‚ğ”j‰ó
+        breakableWall.Damage(); // å£ã«ãƒ€ãƒ¡ãƒ¼ã‚¸ã‚’ä¸ãˆã‚‹
+        CreateHitEffect(); // è¡çªã‚¨ãƒ•ã‚§ã‚¯ãƒˆã‚’ç”Ÿæˆ
+        Destroy(gameObject); // å¼¾ã‚’ç ´å£Š
     }
+
     protected virtual void HandleCharacterCollision(PlayerController hitPlayer)
     {
-        // ƒvƒŒƒCƒ„[‚É“–‚½‚Á‚½ê‡Aƒ_ƒ[ƒW‚ğ—^‚¦‚é
-        hitPlayer.TakeDamage(damageAmount);
-        CreateHitEffect();
-        Destroy(gameObject); // ’e‚ğ”j‰ó
-        Debug.Log("Destroy" + gameObject.name);
+        hitPlayer.TakeDamage(damageAmount); // ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ã«ãƒ€ãƒ¡ãƒ¼ã‚¸ã‚’ä¸ãˆã‚‹
+        CreateHitEffect(); // è¡çªã‚¨ãƒ•ã‚§ã‚¯ãƒˆã‚’ç”Ÿæˆ
+        Destroy(gameObject); // å¼¾ã‚’ç ´å£Š
     }
+
     protected void CreateHitEffect()
     {
         if (_hitEffectPrefab != null)
         {
-            // Õ“ËƒGƒtƒFƒNƒg‚ğ¶¬
             GameObject hitEffect = Instantiate(_hitEffectPrefab, transform.position, Quaternion.identity);
-
-            // ƒGƒtƒFƒNƒg‚ğ3•bŒã‚É©“®‚ÅÁ‹
-            Destroy(hitEffect, 2f);
+            Destroy(hitEffect, 2f); // ã‚¨ãƒ•ã‚§ã‚¯ãƒˆã‚’2ç§’å¾Œã«æ¶ˆå»
         }
     }
-
 }

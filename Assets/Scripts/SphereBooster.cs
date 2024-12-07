@@ -4,6 +4,8 @@ public class SphereBooster : Bullet
 {
     [SerializeField] private float _forceMagnitude = 10.0f; // 力の大きさ
     [SerializeField] private float _gravity = -9.81f; // 重力の強さ
+    private float traveledDistance = 0f; // 累計移動距離
+    private const float maxDistance = 50f; // 最大射程
 
     private Vector3 _velocity; // 初速度
     private Vector3 _gravityEffect; // 重力による影響
@@ -12,7 +14,7 @@ public class SphereBooster : Bullet
     // 発射位置を渡して初速度を設定
     public void Initialize(Vector3 initialDirection)
     {
-        base.Start();
+        //base.Start();//ここのStartはけすべきか
         // 発射方向（shootPointの向いている方向）を取得して、初速度を設定
         _velocity = initialDirection.normalized * _forceMagnitude;
 
@@ -21,13 +23,17 @@ public class SphereBooster : Bullet
 
     }
 
-    protected override void Update()
+    private void Update()
     {
-        // 重力の影響を加える
         _velocity += _gravityEffect * Time.deltaTime;
+        Vector3 delta = _velocity * Time.deltaTime;
+        transform.position += delta;
 
-        // フレームごとに位置を更新
-        transform.position += _velocity * Time.deltaTime;
+        traveledDistance += delta.magnitude;
+        if (traveledDistance >= maxDistance)
+        {
+            Destroy(gameObject); // 射程を超えたら弾を破壊
+        }
     }
 
     private void OnDrawGizmos()
