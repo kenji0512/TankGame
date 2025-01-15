@@ -11,9 +11,9 @@ public class Enemy : Character
     private float _lastAttackTime = 2f;// 攻撃クールダウン（秒）
     private int _attackCooldown;//攻撃クールダウン（秒）
 
-    protected override void Start()
+    protected override void Awake()
     {
-        base.Start();
+        base.Awake();
         _agent = GetComponent<NavMeshAgent>();
     }
 
@@ -51,10 +51,6 @@ public class Enemy : Character
 
             //弾の種類を設定
             Bullet bulletScript = bullet.GetComponent<Bullet>();
-            //if (bulletScript != null)
-            //{
-            //    bulletScript.SetBulletType(Bullet.BulletType.Enemy);
-            //}
         }
     }
 
