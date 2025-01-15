@@ -5,11 +5,10 @@ public class Character : MonoBehaviour
     [SerializeField] protected int maxHealth = 100;
     protected int currentHealth;
 
-    protected virtual void Start()
+    protected virtual void Awake()
     {
         currentHealth = maxHealth;
         Debug.Log($"{gameObject.name} Initial Health: {currentHealth}"); // 初期体力のログ表示
-
     }
 
     // ダメージを受けたときに呼び出されるメソッド
