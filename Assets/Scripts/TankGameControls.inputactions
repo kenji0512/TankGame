@@ -3,22 +3,13 @@
     "maps": [
         {
             "name": "Player1",
-            "id": "63a31d70-a68a-42e7-b011-e49dff06bcd1",
+            "id": "5b9be322-c3c2-4078-afcd-8899623dd969",
             "actions": [
                 {
                     "name": "Move",
                     "type": "Value",
-                    "id": "6bbdf07b-8141-4d1a-986b-8214b80dc054",
-                    "expectedControlType": "",
-                    "processors": "",
-                    "interactions": "",
-                    "initialStateCheck": true
-                },
-                {
-                    "name": "Rotate",
-                    "type": "Value",
-                    "id": "f0dd40b1-b7c3-4a80-a895-da19cd04e23c",
-                    "expectedControlType": "",
+                    "id": "45091886-5646-43dd-bd55-ef9d91ed65c2",
+                    "expectedControlType": "Vector2",
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": true
@@ -26,16 +17,7 @@
                 {
                     "name": "Shoot",
                     "type": "Button",
-                    "id": "d4457dac-0ff5-45b1-9b16-02c53e9bee7a",
-                    "expectedControlType": "",
-                    "processors": "",
-                    "interactions": "",
-                    "initialStateCheck": true
-                },
-                {
-                    "name": "Skill",
-                    "type": "Button",
-                    "id": "e18c3d10-15c8-4bc1-bf19-c07e153c7087",
+                    "id": "4352c549-86ce-4d25-88c3-07af9f97e46c",
                     "expectedControlType": "",
                     "processors": "",
                     "interactions": "",
@@ -45,133 +27,89 @@
             "bindings": [
                 {
                     "name": "",
-                    "id": "df5edd33-7ab9-41e7-ac65-9e16dd227c4c",
+                    "id": "539364de-19bb-4042-9201-a3e283610d49",
                     "path": "<Gamepad>/leftStick",
                     "interactions": "",
                     "processors": "",
-                    "groups": ";New Control Scheme",
+                    "groups": ";Controll2",
                     "action": "Move",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
                 {
-                    "name": "",
-                    "id": "c43c85e4-1e7f-4c4a-bbb8-701942071f2b",
-                    "path": "<Gamepad>/rightStick",
+                    "name": "WASD",
+                    "id": "36de0451-b1f0-48ca-af6a-1cbf48021330",
+                    "path": "2DVector",
                     "interactions": "",
                     "processors": "",
-                    "groups": ";New Control Scheme",
-                    "action": "Rotate",
-                    "isComposite": false,
+                    "groups": "",
+                    "action": "Move",
+                    "isComposite": true,
                     "isPartOfComposite": false
                 },
                 {
-                    "name": "",
-                    "id": "23b3572e-49be-4c21-9573-4d38c7d25853",
-                    "path": "<Gamepad>/buttonSouth",
+                    "name": "up",
+                    "id": "7e07c7ff-b386-4090-a128-d81176f87ab3",
+                    "path": "<Keyboard>/#(W)",
                     "interactions": "",
                     "processors": "",
-                    "groups": ";New Control Scheme",
+                    "groups": ";Controll",
+                    "action": "Move",
+                    "isComposite": false,
+                    "isPartOfComposite": true
+                },
+                {
+                    "name": "down",
+                    "id": "9bb553c9-7a64-4e52-8cc7-33f7363c0a9e",
+                    "path": "<Keyboard>/#(S)",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": ";Controll",
+                    "action": "Move",
+                    "isComposite": false,
+                    "isPartOfComposite": true
+                },
+                {
+                    "name": "left",
+                    "id": "fe98f3ba-bef8-46d2-a8c3-73ad9780c04f",
+                    "path": "<Keyboard>/a",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": ";Controll",
+                    "action": "Move",
+                    "isComposite": false,
+                    "isPartOfComposite": true
+                },
+                {
+                    "name": "right",
+                    "id": "9821c480-002e-47dc-badd-1a9dac6a4270",
+                    "path": "<Keyboard>/d",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": ";Controll",
+                    "action": "Move",
+                    "isComposite": false,
+                    "isPartOfComposite": true
+                },
+                {
+                    "name": "",
+                    "id": "d983ce01-5a2e-4e74-bb3b-5b36eb8cc6e0",
+                    "path": "<Keyboard>/#(T)",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": ";Controll",
                     "action": "Shoot",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
                 {
                     "name": "",
-                    "id": "08db0eb6-7f97-4c7a-a157-0bd5892fd5d3",
-                    "path": "<Gamepad>/buttonEast",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": ";New Control Scheme",
-                    "action": "Skill",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                }
-            ]
-        },
-        {
-            "name": "Player2",
-            "id": "42858293-942e-4ff1-883d-4d97435525fd",
-            "actions": [
-                {
-                    "name": "Move",
-                    "type": "Value",
-                    "id": "737eeabb-4042-4032-838b-1377db2f5d2a",
-                    "expectedControlType": "",
-                    "processors": "",
-                    "interactions": "",
-                    "initialStateCheck": true
-                },
-                {
-                    "name": "Rotate",
-                    "type": "Value",
-                    "id": "69343f07-4cdc-4621-8e4e-710c8a4c2cf3",
-                    "expectedControlType": "",
-                    "processors": "",
-                    "interactions": "",
-                    "initialStateCheck": true
-                },
-                {
-                    "name": "Shoot",
-                    "type": "Button",
-                    "id": "7d71e29a-11c3-4610-9881-5aa90da6d16a",
-                    "expectedControlType": "",
-                    "processors": "",
-                    "interactions": "",
-                    "initialStateCheck": false
-                },
-                {
-                    "name": "Skill",
-                    "type": "Button",
-                    "id": "f7b15324-9d5b-469d-a8c0-a5f0c07d84f4",
-                    "expectedControlType": "",
-                    "processors": "",
-                    "interactions": "",
-                    "initialStateCheck": false
-                }
-            ],
-            "bindings": [
-                {
-                    "name": "",
-                    "id": "bc18a9cc-63d3-4579-a601-c2601b354a62",
-                    "path": "<Gamepad>/leftStick",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": ";New Control Scheme1",
-                    "action": "Move",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                },
-                {
-                    "name": "",
-                    "id": "443e3ce3-37c0-47f2-8b23-d3577c00c33b",
-                    "path": "<Gamepad>/rightStick",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": ";New Control Scheme1",
-                    "action": "Rotate",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                },
-                {
-                    "name": "",
-                    "id": "4b26ffcc-0fd7-4299-a53c-37777d071528",
+                    "id": "4bed6603-1cb7-4a67-8df6-7d33b0ba362e",
                     "path": "<Gamepad>/buttonSouth",
                     "interactions": "",
                     "processors": "",
-                    "groups": ";New Control Scheme1",
+                    "groups": ";Controll2",
                     "action": "Shoot",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                },
-                {
-                    "name": "",
-                    "id": "c81751a1-0cda-4b98-a778-8fded1bd0a51",
-                    "path": "<Gamepad>/buttonEast",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": ";New Control Scheme1",
-                    "action": "Skill",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }
@@ -185,6 +123,28 @@
             "devices": [
                 {
                     "devicePath": "<Gamepad>",
+                    "isOptional": false,
+                    "isOR": false
+                }
+            ]
+        },
+        {
+            "name": "Controll",
+            "bindingGroup": "Controll",
+            "devices": [
+                {
+                    "devicePath": "<Keyboard>",
+                    "isOptional": false,
+                    "isOR": false
+                }
+            ]
+        },
+        {
+            "name": "Controll2",
+            "bindingGroup": "Controll2",
+            "devices": [
+                {
+                    "devicePath": "<XInputController>",
                     "isOptional": false,
                     "isOR": false
                 }

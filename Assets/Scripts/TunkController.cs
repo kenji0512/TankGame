@@ -1,15 +1,19 @@
 using System;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using static UnityEditor.Timeline.TimelinePlaybackControls;
 
-public class PlayerController : Character
+public class TunkController : Character
 {
-    public static event Action<PlayerController> OnPlayerDied;
+    public static event Action<TunkController> OnPlayerDied;
     private PlayerInput _playerInput;
-    private InputAction _moveAction;
-    private InputAction _shootAction;
-    private InputAction _skillAction;
-    private InputAction _rotateAction;
+    [SerializeField] private string _moveActionName = "Move";
+    [SerializeField] private string _shootActionName = "Shoot";
+    //private InputAction _moveAction;
+    //private InputAction _shootAction;
+    //private InputAction _skillAction;
+    //private InputAction _rotateAction;
     public float _moveSpeed = 5f;     // タンクの移動速度
     public float _turnSpeed = 100f;   // タンクの回転速度
     private Transform _firePoint;//Transformはpriveteにする
@@ -23,62 +27,53 @@ public class PlayerController : Character
     {
         base.Awake(); // StartではなくAwakeを呼ぶ
         _playerInput = GetComponent<PlayerInput>();
-        Debug.Log($"Player Type: {_playerType}");
+        // UnityEvent経由で受け取るように設定
+        _playerInput.notificationBehavior = PlayerNotifications.InvokeUnityEvents;
 
         // Player 1用またはPlayer 2用のアクションマップを設定
         if (_playerType == PlayerType.Player1)
         {
-            Debug.Log("Switching to Player1 action map");
-
             _playerInput.SwitchCurrentActionMap("Player1");
         }
         else if (_playerType == PlayerType.Player2)
         {
-
-            Debug.Log("Switching to Player2 action map");
-
-            _playerInput.SwitchCurrentActionMap("Player2");
+            _playerInput.SwitchCurrentActionMap("Player1");
         }
-        Debug.Log("Switching to " + (_playerType == PlayerType.Player1 ? "Player1" : "Player2") + " action map");
+        // PlayerInputのイベント登録
+        //_playerInput.actions[_moveActionName].performed += HandleMovement;
+        _playerInput.actions[_shootActionName].performed += HandleShooting;
 
-        _moveAction = _playerInput.actions["Move"];
-        _shootAction = _playerInput.actions["Shoot"];
-        _rotateAction = _playerInput.actions["Rotate"];
+        //_moveAction = _playerInput.actions["Move"];
+        //_shootAction = _playerInput.actions["Shoot"];
+        //_rotateAction = _playerInput.actions["Rotate"];
 
         // アクションを有効化
-        _moveAction.Enable();
-        _shootAction.Enable();
-        _rotateAction.Enable();
+        //_moveAction.Enable();
+        //_shootAction.Enable();
+        //_rotateAction.Enable();
 
         _animator = GetComponentInChildren<Animator>();
         _rb = GetComponent<Rigidbody>();
         Debug.Log("Player2 action map is active.");
-        Debug.Log("Move action value: " + _moveAction.ReadValue<Vector2>());
 
     }
-
     private void Update()
     {
-        // 最適化: Updateマネージャーを使用する
-        if (_currentState != State.Dead)
-        {
-            HandleMovement();
-            HandleShooting();
-        }
+        HandleMovement();
     }
-
-    void HandleMovement()
+    public void HandleMovement()
     {
         // ゲームパッドの移動入力を取得
-        Vector2 moveInput = _moveAction.ReadValue<Vector2>();
+        Vector2 moveInput = _playerInput.actions[_moveActionName].ReadValue<Vector2>();
         float moveDirection = moveInput.y;  // 前後移動
         float turnDirection = moveInput.x;  // 左右回転
 
         MoveTank(moveDirection, turnDirection);
 
         // 状態を更新
-        _currentState = moveDirection != 0 || turnDirection != 0 ? _currentState | State.Moving : _currentState & ~State.Moving;
-
+        _currentState = moveDirection != 0 || turnDirection != 0
+            ? _currentState | State.Moving
+            : _currentState & ~State.Moving;
         //float moveInput = 0f;
         //float turnInput = 0f;
 
@@ -111,28 +106,27 @@ public class PlayerController : Character
         _rb.MoveRotation(_rb.rotation * turnRotation);
     }//移動処理
 
-    void HandleShooting()
+    void HandleShooting(InputAction.CallbackContext context)
     {
         Vector3 shootDirection = transform.forward; // 発射方向
-        bool isShooting = false;
-        bool isRocketShooting = false;
+        //bool isShooting = false;
+        //bool isRocketShooting = false;
 
         // プレイヤーの入力に応じて弾を発射
-        if (_shootAction.triggered) // ボタンが押された場合
+        if (_playerInput.actions[_shootActionName].triggered)
         {
-            _bulletShoot.Shoot(_playerType, shootDirection);
-            isShooting = true;
+            // 通常弾の発射
+            _bulletShoot.Shoot(_playerType, transform.forward);
+            TriggerShootAnimation("shoot");
         }
-        else if (_playerType == PlayerType.Player1 && Keyboard.current.fKey.isPressed)
+        else if ((_playerType == PlayerType.Player1 && context.control.device == Keyboard.current) ||
+        (_playerType == PlayerType.Player2 && context.control.device == Keyboard.current))
         {
-            isRocketShooting = true;
-            _bulletShoot.RocketShoot(_playerType, shootDirection);
+            // ロケット弾の発射
+            _bulletShoot.RocketShoot(_playerType, transform.forward);
+            TriggerShootAnimation("rocketShoot");
         }
-        else if (_playerType == PlayerType.Player2 && Keyboard.current.backslashKey.isPressed)
-        {
-            isRocketShooting = true;
-            _bulletShoot.RocketShoot(_playerType, shootDirection);
-        }
+
         //// プレイヤーの入力に応じて弾を発射
         //switch (_playerType)
         //{
@@ -163,20 +157,25 @@ public class PlayerController : Character
         //        break;
         //}
 
-        if (isRocketShooting)
-        {
-            _animator.SetTrigger("rocketShoot"); // ロケット用のトリガーを設定
-            _currentState = _currentState | State.Shooting;
-        }
-        else if (isShooting)
-        {
-            _animator.SetTrigger("shoot"); // 通常の弾用トリガー
-            _currentState = _currentState | State.Shooting;
-        }
-        else
-        {
-            _currentState = _currentState & ~State.Shooting;
-        }
+        //if (isRocketShooting)
+        //{
+        //    _animator.SetTrigger("rocketShoot"); // ロケット用のトリガーを設定
+        //    _currentState = _currentState | State.Shooting;
+        //}
+        //else if (isShooting)
+        //{
+        //    _animator.SetTrigger("shoot"); // 通常の弾用トリガー
+        //    _currentState = _currentState | State.Shooting;
+        //}
+        //else
+        //{
+        //    _currentState = _currentState & ~State.Shooting;
+        //}
+    }
+    private void TriggerShootAnimation(string triggerName)
+    {
+        _animator.SetTrigger(triggerName);
+        _currentState |= State.Shooting;
     }
     public override void TakeDamage(int damageAmount)
     {
