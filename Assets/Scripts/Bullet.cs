@@ -30,7 +30,7 @@ public class Bullet : MonoBehaviour
     {
         if (other.CompareTag("Player")) // プレイヤータグで判定
         {
-            var hitPlayer = other.GetComponent<PlayerController>(); // プレイヤーがタグ付きであればコンポーネント取得
+            var hitPlayer = other.GetComponent<TunkController>(); // プレイヤーがタグ付きであればコンポーネント取得
             if (hitPlayer != null && hitPlayer._playerType != shooterType)
             {
                 HandleCharacterCollision(hitPlayer);
@@ -55,7 +55,7 @@ public class Bullet : MonoBehaviour
         Destroy(gameObject); // 弾を破壊
     }
 
-    protected virtual void HandleCharacterCollision(PlayerController hitPlayer)
+    protected virtual void HandleCharacterCollision(TunkController hitPlayer)
     {
         hitPlayer.TakeDamage(damageAmount); // プレイヤーにダメージを与える
         CreateHitEffect(); // 衝突エフェクトを生成

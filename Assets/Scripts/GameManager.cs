@@ -7,7 +7,7 @@ public class GameManager : MonoBehaviour
     public static GameManager Instance { get; private set; }
 
     private bool isGamePaused = false;
-    private List<PlayerController> _players = new List<PlayerController>(); // プレイヤーリストを追加
+    private List<TunkController> _players = new List<TunkController>(); // プレイヤーリストを追加
     private GameState currentState = GameState.Playing;
 
     public GameState CurrentState { get { return currentState; } }
@@ -76,13 +76,13 @@ public class GameManager : MonoBehaviour
         return isGamePaused;
     }
 
-    public void RegisterPlayer(PlayerController player)
+    public void RegisterPlayer(TunkController player)
     {
         _players.Add(player);
         Debug.Log($"Player {player.gameObject.name} joined the game. Total players: {_players.Count}");
     }
 
-    public void RemovePlayer(PlayerController player)
+    public void RemovePlayer(TunkController player)
     {
         _players.Remove(player);
         Debug.Log($"Player {player.gameObject.name} left the game. Remaining players: {_players.Count}");
