@@ -313,8 +313,8 @@ Camera:
     y: 0
     width: 0.5
     height: 1
-  near clip plane: 1.0330936
-  far clip plane: 1000
+  near clip plane: 0.12
+  far clip plane: 2000
   field of view: 60.000004
   orthographic: 0
   orthographic size: 5
@@ -1038,8 +1038,8 @@ Camera:
     y: 0
     width: 0.5
     height: 1
-  near clip plane: 1.0330936
-  far clip plane: 1000
+  near clip plane: 0.12
+  far clip plane: 2000
   field of view: 60.000004
   orthographic: 0
   orthographic size: 5
@@ -1342,6 +1342,10 @@ PrefabInstance:
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 223239186245835037, guid: 00f825b659e52674c89009710471cdba, type: 3}
+      propertyPath: _shootpointH
+      value: 
+      objectReference: {fileID: 1947890690}
+    - target: {fileID: 223239186245835037, guid: 00f825b659e52674c89009710471cdba, type: 3}
       propertyPath: _shootpointR
       value: 
       objectReference: {fileID: 1147566338}
@@ -1349,6 +1353,10 @@ PrefabInstance:
       propertyPath: _roketBulletpre
       value: 
       objectReference: {fileID: 4815300177652869576, guid: d4fd45e50913e3a4fa6d1cdf4c32177e, type: 3}
+    - target: {fileID: 223239186245835037, guid: 00f825b659e52674c89009710471cdba, type: 3}
+      propertyPath: _homingBulletpre
+      value: 
+      objectReference: {fileID: 1223632328515166, guid: 9ed671e46c346d84f91d3c0682968012, type: 3}
     - target: {fileID: 223239186245835037, guid: 00f825b659e52674c89009710471cdba, type: 3}
       propertyPath: _initialDirection.x
       value: 1
@@ -1468,6 +1476,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 2797129902795045935, guid: 00f825b659e52674c89009710471cdba, type: 3}
       insertIndex: 2
       addedObject: {fileID: 1147566338}
+    - targetCorrespondingSourceObject: {fileID: 2797129902795045935, guid: 00f825b659e52674c89009710471cdba, type: 3}
+      insertIndex: 3
+      addedObject: {fileID: 1947890690}
     m_AddedComponents:
     - targetCorrespondingSourceObject: {fileID: 2797129902795045934, guid: 00f825b659e52674c89009710471cdba, type: 3}
       insertIndex: -1
@@ -1514,6 +1525,14 @@ MonoBehaviour:
       m_Calls: []
     m_ActionId: 4352c549-86ce-4d25-88c3-07af9f97e46c
     m_ActionName: 'Player1/Shoot[/Keyboard/t,/XInputControllerWindows/buttonSouth]'
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: 76260eb5-42fc-4a87-875e-cdf509278c23
+    m_ActionName: 'Player1/RocketShoot[/Keyboard/y,/XInputControllerWindows/buttonEast]'
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: c0e51e7c-2cf7-4963-9c2c-f2a6ad9511b6
+    m_ActionName: 'Player1/HomingShoot[/Keyboard/u,/XInputControllerWindows/buttonNorth]'
   m_NeverAutoSwitchControlSchemes: 1
   m_DefaultControlScheme: Controll
   m_DefaultActionMap: Player1
@@ -1695,6 +1714,37 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ac0b09e7857660247b1477e93731de29, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!1 &1175744637
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1175744638}
+  m_Layer: 0
+  m_Name: Homingshoot
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1175744638
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1175744637}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 1.85, z: 0.971}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1070665788}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1187309985
 GameObject:
   m_ObjectHideFlags: 0
@@ -2308,6 +2358,10 @@ PrefabInstance:
       value: 0.5
       objectReference: {fileID: 0}
     - target: {fileID: 7622624725635748985, guid: 4a1b02cd8f796dc4c9d5c5afce18d0f6, type: 3}
+      propertyPath: _shootpointH
+      value: 
+      objectReference: {fileID: 1175744638}
+    - target: {fileID: 7622624725635748985, guid: 4a1b02cd8f796dc4c9d5c5afce18d0f6, type: 3}
       propertyPath: _shootpointR
       value: 
       objectReference: {fileID: 1136516198}
@@ -2315,6 +2369,10 @@ PrefabInstance:
       propertyPath: _roketBulletpre
       value: 
       objectReference: {fileID: 4815300177652869576, guid: d4fd45e50913e3a4fa6d1cdf4c32177e, type: 3}
+    - target: {fileID: 7622624725635748985, guid: 4a1b02cd8f796dc4c9d5c5afce18d0f6, type: 3}
+      propertyPath: _homingBulletpre
+      value: 
+      objectReference: {fileID: 1605502800287180, guid: 2f448f2daa573b94ebfc6a28951422ac, type: 3}
     - target: {fileID: 7622624725635748985, guid: 4a1b02cd8f796dc4c9d5c5afce18d0f6, type: 3}
       propertyPath: _initialDirection.y
       value: 56
@@ -2338,6 +2396,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 2797129902795045935, guid: 4a1b02cd8f796dc4c9d5c5afce18d0f6, type: 3}
       insertIndex: 2
       addedObject: {fileID: 1136516198}
+    - targetCorrespondingSourceObject: {fileID: 2797129902795045935, guid: 4a1b02cd8f796dc4c9d5c5afce18d0f6, type: 3}
+      insertIndex: 3
+      addedObject: {fileID: 1175744638}
     m_AddedComponents:
     - targetCorrespondingSourceObject: {fileID: 2797129902795045934, guid: 4a1b02cd8f796dc4c9d5c5afce18d0f6, type: 3}
       insertIndex: -1
@@ -2387,7 +2448,7 @@ MonoBehaviour:
   m_Lens:
     FieldOfView: 45.30256
     OrthographicSize: 5
-    NearClipPlane: 0.62389684
+    NearClipPlane: 4.85
     FarClipPlane: 1000
     Dutch: 0
     ModeOverride: 0
@@ -2565,6 +2626,14 @@ MonoBehaviour:
       m_Calls: []
     m_ActionId: 4352c549-86ce-4d25-88c3-07af9f97e46c
     m_ActionName: 'Player1/Shoot[/Keyboard/t,/XInputControllerWindows/buttonSouth]'
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: 76260eb5-42fc-4a87-875e-cdf509278c23
+    m_ActionName: 'Player1/RocketShoot[/Keyboard/y,/XInputControllerWindows/buttonEast]'
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: c0e51e7c-2cf7-4963-9c2c-f2a6ad9511b6
+    m_ActionName: 'Player1/HomingShoot[/Keyboard/u,/XInputControllerWindows/buttonNorth]'
   m_NeverAutoSwitchControlSchemes: 1
   m_DefaultControlScheme: Controll2
   m_DefaultActionMap: Player1
@@ -2630,8 +2699,8 @@ MonoBehaviour:
   m_Lens:
     FieldOfView: 60.000004
     OrthographicSize: 5
-    NearClipPlane: 1.0330936
-    FarClipPlane: 1000
+    NearClipPlane: 0.12
+    FarClipPlane: 2000
     Dutch: 0
     ModeOverride: 0
     GateFit: 2
@@ -2674,6 +2743,37 @@ Transform:
   m_Children:
   - {fileID: 1854242496}
   m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1947890689
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1947890690}
+  m_Layer: 0
+  m_Name: Homingshoot
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1947890690
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1947890689}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 2.82, z: 1.72}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 17140859}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &1994359018
 PrefabInstance:

@@ -19,7 +19,7 @@ public class Bullet : MonoBehaviour
     {
         _direction = direction.normalized; // 弾の移動方向を正規化
     }
-    private void Update()
+    protected virtual void Update()
     {
         // 弾を前方に移動させる
         _direction = _direction.normalized;
