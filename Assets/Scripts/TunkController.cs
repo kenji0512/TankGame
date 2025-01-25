@@ -11,10 +11,11 @@ public class TunkController : Character
     public float _moveSpeed = 5f;     // タンクの移動速度
     public float _turnSpeed = 100f;   // タンクの回転速度
     private Transform _firePoint;//Transformはpriveteにする
-    [SerializeField] private BulletShoot _bulletShoot;
-    public PlayerType _playerType;    // プレイヤーのタイプ
+    [SerializeField] private BulletShoot _bulletShoot;  // BulletShootコンポーネント
+    //[SerializeField] private GameObject _bulletshootH;
+    public PlayerType playerType;    // プレイヤーのタイプ
     private State _currentState = State.Idle; // プレイヤーの現在の状態
-    private HomingMissile _missile;
+    //private HomingMissile _missile;
     private Animator _animator;
     private Rigidbody _rb;
 
@@ -24,13 +25,21 @@ public class TunkController : Character
         _playerInput = GetComponent<PlayerInput>();
         // UnityEvent経由で受け取るように設定
         _playerInput.notificationBehavior = PlayerNotifications.InvokeUnityEvents;
-
+        // _bulletShootの初期化を確認
+        //if (_bulletshootH == null)
+        //{
+        //    Debug.LogError("_bulletshootH is not assigned.");
+        //}
+        //else
+        //{
+        //    BulletShoot _bulletShoot = _bulletshootH.GetComponent<BulletShoot>();
+        //}        
         // Player 1用またはPlayer 2用のアクションマップを設定
-        if (_playerType == PlayerType.Player1)
+        if (playerType == PlayerType.Player1)
         {
             _playerInput.SwitchCurrentActionMap("Player1");
         }
-        else if (_playerType == PlayerType.Player2)
+        else if (playerType == PlayerType.Player2)
         {
             _playerInput.SwitchCurrentActionMap("Player1");
         }
@@ -39,9 +48,32 @@ public class TunkController : Character
         _playerInput.actions["RocketShoot"].performed += HandleShooting;
         _playerInput.actions["HomingShoot"].performed += HandleShooting;
 
-        _missile = GetComponent<HomingMissile>();
+        //_missile = GetComponent<HomingMissile>();
+        //Debug.Log("_missile : " + _missile);
         _animator = GetComponentInChildren<Animator>();
         _rb = GetComponent<Rigidbody>();
+
+        if (!_playerInput.actions.Contains(_playerInput.actions[_shootActionName]))
+        {
+            Debug.LogError($"Action {_shootActionName} is not found in PlayerInput.");
+        }
+        //if (_missile == null)
+        //{
+        //    Debug.LogError("_missile is not assigned.");
+        //}
+
+    }
+    void Start()
+    {
+        GameObject homingBulletPrefab = _bulletShoot.HomingBulletPrefab;
+        //if (homingBulletPrefab != null)
+        //{
+        //    Debug.Log("Homing Bullet Prefab: " + homingBulletPrefab.name);
+        //}
+        //else
+        //{
+        //    Debug.LogError("Homing Bullet Prefab is not set.");
+        //}
     }
 
     private void Update()
@@ -77,41 +109,37 @@ public class TunkController : Character
     void HandleShooting(InputAction.CallbackContext context)
     {
         Vector3 shootDirection = transform.forward; // 発射方向
+        Debug.Log($"Shooting action triggered: {context.action.name}");
+        if (_bulletShoot == null)
+        {
+            Debug.LogError("_bulletShoot is not assigned.");
+            return; // 処理を中断
+        }
+        Debug.Log($"Shoo" +
+            $"" +
+            $"ting action triggered: {context.action.name}");
 
         // プレイヤーの入力に応じて弾を発射
         if (_playerInput.actions[_shootActionName].triggered)
         {
             // 通常弾の発射
-            _bulletShoot.Shoot(_playerType, transform.forward);
+            _bulletShoot.Shoot(playerType, transform.forward);
             TriggerShootAnimation("shoot");
         }
 
         // ロケット弾の発射（RocketShootアクションに応じて処理）
         if (context.action.name == "RocketShoot") // ロケット弾の場合のチェック
         {
-            Debug.Log($"Rocket Shoot by {_playerType}"); // ロケット弾の発射が呼ばれたことを確認
-            _bulletShoot.RocketShoot(_playerType, shootDirection);
+            Debug.Log($"Rocket Shoot by {playerType}"); // ロケット弾の発射が呼ばれたことを確認
+            _bulletShoot.RocketShoot(playerType, shootDirection);
             TriggerShootAnimation("rocketShoot");
         }
         //ホーミング弾が発射
         if (context.action.name == "HomingShoot")
         {
+            _bulletShoot.HomingMissle(playerType);
+            TriggerShootAnimation("shoot");
 
-            Transform target = _missile.FindClosestTarget(); // 最も近いターゲットを取得
-            if (target == null)
-            {
-                Debug.LogError("Target is null in Initialize method.");
-            }
-            if (target != null)
-            {
-                Debug.Log($"Homing Shoot by {_playerType} at {target.name}");
-                _bulletShoot.HomingMissle(_playerType, target);
-                TriggerShootAnimation("shoot");
-            }
-            else
-            {
-                Debug.LogWarning("No target found for homing missile.");
-            }
         }
     }
 

@@ -1556,7 +1556,7 @@ MonoBehaviour:
   _moveSpeed: 5
   _turnSpeed: 100
   _bulletShoot: {fileID: 220989015}
-  _playerType: 0
+  playerType: 0
 --- !u!1 &1136516197
 GameObject:
   m_ObjectHideFlags: 0
@@ -1942,8 +1942,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f8603ae65e861874997bdceafb85e20b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  tankBluePrefab: {fileID: 637808398}
-  tankRedPrefab: {fileID: 1907112529}
 --- !u!1001 &1312373679
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -2657,7 +2655,7 @@ MonoBehaviour:
   _moveSpeed: 5
   _turnSpeed: 100
   _bulletShoot: {fileID: 480498684}
-  _playerType: 1
+  playerType: 1
 --- !u!1 &1947588549
 GameObject:
   m_ObjectHideFlags: 0
