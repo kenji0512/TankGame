@@ -2,18 +2,13 @@ using UnityEngine;
 
 public class HomingMissile : Bullet
 {
-    [SerializeField] private float homingSpeed = 5f; // 誘導速度
-    [SerializeField] private float rotationSpeed = 200f; // 回転速度
-    private Transform target; // ターゲット（追尾対象）
+    [SerializeField] private float _homingSpeed = 5f; // 誘導速度
+    [SerializeField] private float _rotationSpeed = 200f; // 回転速度
+    private Transform _target; // ターゲット（追尾対象）
 
     // 初期化メソッド
-    public void Initialize(Transform target, PlayerType shooterType)
+    public void Initialize(PlayerType shooterType)
     {
-        if (target == null)
-        {
-            Debug.LogError("Target is null in Initialize method.");
-        }
-        this.target = target;
         this.shooterType = shooterType;
     }
     protected override void Start()
@@ -24,7 +19,7 @@ public class HomingMissile : Bullet
         Transform targetObject = FindClosestTarget();
         if (targetObject != null)
         {
-            target = targetObject.transform;
+            _target = targetObject.transform;
         }
         else
         {
@@ -35,20 +30,25 @@ public class HomingMissile : Bullet
 
     private void Update()
     {
-        if (target != null)
+        if (_target == null || Vector3.Distance(transform.position, _target.position) > 50f)
+        {
+            // ターゲットがない、またはターゲットが一定距離以上離れている場合、再検索
+            _target = FindClosestTarget();
+        }
+        if (_target != null)
         {
             // ターゲット方向を計算
-            Vector3 directionToTarget = (target.position - transform.position).normalized;
+            Vector3 directionToTarget = (_target.position - transform.position).normalized;
 
             // 現在の方向をターゲット方向に向けて徐々に回転
             Vector3 newDirection = Vector3.RotateTowards(transform.forward, directionToTarget,
-                                                         rotationSpeed * Mathf.Deg2Rad * Time.deltaTime, 0f);
+                                                         _rotationSpeed * Mathf.Deg2Rad * Time.deltaTime, 0f);
 
             // 回転を適用
             transform.rotation = Quaternion.LookRotation(newDirection);
 
             // 前進
-            transform.position += transform.forward * homingSpeed * Time.deltaTime;
+            transform.position += transform.forward * _homingSpeed * Time.deltaTime;
         }
         else
         {
@@ -70,6 +70,10 @@ public class HomingMissile : Bullet
             if (potentialTarget.transform == this.transform) continue; // 自分自身は無視
 
             float distance = Vector3.Distance(transform.position, potentialTarget.transform.position);
+            if (potentialTarget.GetComponent<TunkController>().playerType == shooterType)
+            {
+                continue;
+            }
             if (distance < shortestDistance && distance <= maxRange)
             {
                 shortestDistance = distance;

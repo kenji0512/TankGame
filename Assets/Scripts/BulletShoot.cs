@@ -14,7 +14,16 @@ public class BulletShoot : MonoBehaviour
     public float shootEffectLifetime = 2f; // 発射エフェクトの寿命（秒）
     [SerializeField] private float _delayTime = 0.5f;
     public PlayerType shooterType;
+    public GameObject HomingBulletPrefab => _homingBulletpre; // プロパティとして公開
 
+
+    public void Awake()
+    {
+        if (_shootpoint == null)
+        {
+            Debug.LogError("_shootpoint is not assigned.");
+        }
+    }
     public void Shoot(PlayerType shooterType, Vector3 direction)
     {
         //発射エフェクトを生成
@@ -52,7 +61,7 @@ public class BulletShoot : MonoBehaviour
         // 発射を遅延させる
         StartCoroutine(DelayedShoot(shooter, direction));
     }
-    public void HomingMissle(PlayerType shooter, Transform target)
+    public void HomingMissle(PlayerType shooter)
     {
         if (_homingBulletpre == null)
         {
@@ -63,10 +72,7 @@ public class BulletShoot : MonoBehaviour
         {
             Debug.LogError("Shoot Point is not assigned.");
         }
-        if (target == null)
-        {
-            Debug.LogError("Target is null in HomingMissile.");
-        }
+
         // 他の参照オブジェクトも同様に確認
         if (shooter == null)
         {
@@ -83,7 +89,7 @@ public class BulletShoot : MonoBehaviour
             HomingMissile homingscript = homingBullet.GetComponent<HomingMissile>();
             if (homingscript != null)
             {
-                homingscript.Initialize(target, shooter);
+                homingscript.Initialize(shooter);
             }
             else
             {
