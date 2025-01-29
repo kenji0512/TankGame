@@ -5,6 +5,8 @@ public class HomingMissile : Bullet
     [SerializeField] private float _homingSpeed = 5f; // 誘導速度
     [SerializeField] private float _rotationSpeed = 200f; // 回転速度
     private Transform _target; // ターゲット（追尾対象）
+    [SerializeField] float maxRange = 50f; // 最大探索範囲
+
 
     // 初期化メソッド
     public void Initialize(PlayerType shooterType)
@@ -63,7 +65,6 @@ public class HomingMissile : Bullet
         GameObject[] potentialTargets = GameObject.FindGameObjectsWithTag("Player");
         Transform closestTarget = null;
         float shortestDistance = Mathf.Infinity;
-        float maxRange = 50f; // 最大探索範囲
 
         foreach (GameObject potentialTarget in potentialTargets)
         {
@@ -94,5 +95,6 @@ public class HomingMissile : Bullet
     {
         base.HandleWallCollision(breakableWall);
         Debug.Log("Homing bullet collided with a wall!");
+        Destroy(this.gameObject);
     }
 }
