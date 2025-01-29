@@ -12,10 +12,8 @@ public class TunkController : Character
     public float _turnSpeed = 100f;   // タンクの回転速度
     private Transform _firePoint;//Transformはpriveteにする
     [SerializeField] private BulletShoot _bulletShoot;  // BulletShootコンポーネント
-    //[SerializeField] private GameObject _bulletshootH;
     public PlayerType playerType;    // プレイヤーのタイプ
     private State _currentState = State.Idle; // プレイヤーの現在の状態
-    //private HomingMissile _missile;
     private Animator _animator;
     private Rigidbody _rb;
 
@@ -23,17 +21,7 @@ public class TunkController : Character
     {
         base.Awake(); // StartではなくAwakeを呼ぶ
         _playerInput = GetComponent<PlayerInput>();
-        // UnityEvent経由で受け取るように設定
-        _playerInput.notificationBehavior = PlayerNotifications.InvokeUnityEvents;
-        // _bulletShootの初期化を確認
-        //if (_bulletshootH == null)
-        //{
-        //    Debug.LogError("_bulletshootH is not assigned.");
-        //}
-        //else
-        //{
-        //    BulletShoot _bulletShoot = _bulletshootH.GetComponent<BulletShoot>();
-        //}        
+        _playerInput.notificationBehavior = PlayerNotifications.InvokeUnityEvents;       
         // Player 1用またはPlayer 2用のアクションマップを設定
         if (playerType == PlayerType.Player1)
         {
@@ -48,8 +36,6 @@ public class TunkController : Character
         _playerInput.actions["RocketShoot"].performed += HandleShooting;
         _playerInput.actions["HomingShoot"].performed += HandleShooting;
 
-        //_missile = GetComponent<HomingMissile>();
-        //Debug.Log("_missile : " + _missile);
         _animator = GetComponentInChildren<Animator>();
         _rb = GetComponent<Rigidbody>();
 
@@ -57,23 +43,6 @@ public class TunkController : Character
         {
             Debug.LogError($"Action {_shootActionName} is not found in PlayerInput.");
         }
-        //if (_missile == null)
-        //{
-        //    Debug.LogError("_missile is not assigned.");
-        //}
-
-    }
-    void Start()
-    {
-        GameObject homingBulletPrefab = _bulletShoot.HomingBulletPrefab;
-        //if (homingBulletPrefab != null)
-        //{
-        //    Debug.Log("Homing Bullet Prefab: " + homingBulletPrefab.name);
-        //}
-        //else
-        //{
-        //    Debug.LogError("Homing Bullet Prefab is not set.");
-        //}
     }
 
     private void Update()
@@ -107,17 +76,13 @@ public class TunkController : Character
     }//移動処理
 
     void HandleShooting(InputAction.CallbackContext context)
-    {
-        Vector3 shootDirection = transform.forward; // 発射方向
-        Debug.Log($"Shooting action triggered: {context.action.name}");
+    { 
+        //BulletShoot bulletshootscript = bullet.GetCon
+        //Vector3 shootDirection = transform.forward; // 発射方向
         if (_bulletShoot == null)
         {
-            Debug.LogError("_bulletShoot is not assigned.");
             return; // 処理を中断
         }
-        Debug.Log($"Shoo" +
-            $"" +
-            $"ting action triggered: {context.action.name}");
 
         // プレイヤーの入力に応じて弾を発射
         if (_playerInput.actions[_shootActionName].triggered)
@@ -131,7 +96,7 @@ public class TunkController : Character
         if (context.action.name == "RocketShoot") // ロケット弾の場合のチェック
         {
             Debug.Log($"Rocket Shoot by {playerType}"); // ロケット弾の発射が呼ばれたことを確認
-            _bulletShoot.RocketShoot(playerType, shootDirection);
+            _bulletShoot.RocketShoot(playerType);
             TriggerShootAnimation("rocketShoot");
         }
         //ホーミング弾が発射

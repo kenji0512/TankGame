@@ -3,19 +3,20 @@ using UnityEngine;
 
 public class BulletShoot : MonoBehaviour
 {
+    [SerializeField] private float _initialDirectionY = 1.0f; // 初期射出方向
+    [SerializeField] private float _delayTime = 0.5f;
+
     public GameObject _bulletpre; // 弾のプレハブ
     public GameObject _roketBulletpre; // 弾のプレハブ
     public GameObject _homingBulletpre; // 弾のプレハブ
     public Transform _shootpoint; // 弾を発射する位置
     public Transform _shootpointR; // 弾を発射する位置
     public Transform _shootpointH; // 弾を発射する位置
-    [SerializeField] Vector3 _initialDirection = new Vector3(1.0f, 1.0f, 0f); // 初期射出方向
     public GameObject _shootEffectPrefab;
     public float shootEffectLifetime = 2f; // 発射エフェクトの寿命（秒）
-    [SerializeField] private float _delayTime = 0.5f;
     public PlayerType shooterType;
-    public GameObject HomingBulletPrefab => _homingBulletpre; // プロパティとして公開
 
+    public GameObject HomingBulletPrefab => _homingBulletpre; // プロパティとして公開
 
     public void Awake()
     {
@@ -49,7 +50,7 @@ public class BulletShoot : MonoBehaviour
             Debug.LogError("Bullet Prefab or Shoot Point is not assigned.");
         }
     }
-    public void RocketShoot(PlayerType shooter, Vector3 direction)
+    public void RocketShoot(PlayerType shooter)
     {
         //発射エフェクトを生成
         if (_shootEffectPrefab != null)
@@ -59,7 +60,7 @@ public class BulletShoot : MonoBehaviour
         }
 
         // 発射を遅延させる
-        StartCoroutine(DelayedShoot(shooter, direction));
+        StartCoroutine(DelayedShoot(shooter));
     }
     public void HomingMissle(PlayerType shooter)
     {
@@ -101,7 +102,7 @@ public class BulletShoot : MonoBehaviour
             Debug.LogError("Homing Bullet Prefab or Shoot Point is not assigned.");
         }
     }
-    private IEnumerator DelayedShoot(PlayerType shooter, Vector3 direction)
+    private IEnumerator DelayedShoot(PlayerType shooter)
     {
         // 指定された遅延時間だけ待機
         yield return new WaitForSeconds(_delayTime);
@@ -115,7 +116,7 @@ public class BulletShoot : MonoBehaviour
             //roketBullet.GetComponent<SphereBooster>().Initialize(direction, shooter); // 発射方向を渡す
             if (boosterScript != null)
             {
-                boosterScript.Initialize(_initialDirection); // direction を渡す
+                boosterScript.Initialize(new Vector3(transform.forward.x, transform.forward.y + _initialDirectionY, transform.forward.z)); // direction を渡す
                 boosterScript.shooterType = shooter;
                 roketBullet.GetComponent<SphereBooster>().shooterType = shooter; // shooterType を渡す
             }
