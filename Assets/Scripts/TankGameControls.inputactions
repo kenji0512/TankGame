@@ -2,7 +2,7 @@
     "name": "TankGameControls",
     "maps": [
         {
-            "name": "Player1",
+            "name": "Player",
             "id": "5b9be322-c3c2-4078-afcd-8899623dd969",
             "actions": [
                 {

@@ -16,6 +16,9 @@ public class GameManager : MonoBehaviour
     public event GameEvent OnGamePaused;
     public event GameEvent OnGameResumed;
     public event GameEvent OnGameOver;
+
+    float _timer = 0.0f;
+
     private void Awake()
     {
         if (Instance != null && Instance != this)
@@ -37,7 +40,11 @@ public class GameManager : MonoBehaviour
         OnGameStarted?.Invoke();
         Debug.Log("Game Started!");
     }
-
+    public void HitStop(float time)
+    {
+        _timer = time;
+        Time.timeScale = 0;
+    }
     public void PauseGame()
     {
         if (currentState == GameState.Paused)
@@ -111,7 +118,7 @@ public class GameManager : MonoBehaviour
 //単調さを防ぎ、リプレイ性を高めるための工夫：
 
 //多彩な武器システム
-//通常弾、ロケット弾以外にも、新たな武器（レーザー、爆発弾、誘導弾など）を追加し、プレイヤーが選択できるようにする。
+//通常弾、ロケット弾以外にも、新たな武器（レーザー、○爆発弾、○誘導弾など）を追加し、プレイヤーが選択できるようにする。
 //特殊スキルの導入
 //一定時間無敵になるスキルや、高速移動スキルを追加。
 //パワーアップアイテム

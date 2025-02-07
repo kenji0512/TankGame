@@ -8,12 +8,13 @@ public class TunkController : Character
     private PlayerInput _playerInput;
     [SerializeField] private string _moveActionName = "Move";
     [SerializeField] private string _shootActionName = "Shoot";
-    public float _moveSpeed = 5f;     // タンクの移動速度
+    [SerializeField] private BulletShoot _bulletShoot;  // BulletShootコンポーネント
+    public float _moveSpeed = 5f; // タンクの移動速度
     public float _turnSpeed = 100f;   // タンクの回転速度
     private Transform _firePoint;//Transformはpriveteにする
-    [SerializeField] private BulletShoot _bulletShoot;  // BulletShootコンポーネント
     public PlayerType playerType;    // プレイヤーのタイプ
     private State _currentState = State.Idle; // プレイヤーの現在の状態
+    private bool isInvulnerable = false;
     private Animator _animator;
     private Rigidbody _rb;
 
@@ -25,11 +26,11 @@ public class TunkController : Character
         // Player 1用またはPlayer 2用のアクションマップを設定
         if (playerType == PlayerType.Player1)
         {
-            _playerInput.SwitchCurrentActionMap("Player1");
+            _playerInput.SwitchCurrentActionMap("Player");
         }
         else if (playerType == PlayerType.Player2)
         {
-            _playerInput.SwitchCurrentActionMap("Player1");
+            _playerInput.SwitchCurrentActionMap("Player");
         }
         // PlayerInputのイベント登録
         _playerInput.actions[_shootActionName].performed += HandleShooting;
@@ -77,8 +78,6 @@ public class TunkController : Character
 
     void HandleShooting(InputAction.CallbackContext context)
     { 
-        //BulletShoot bulletshootscript = bullet.GetCon
-        //Vector3 shootDirection = transform.forward; // 発射方向
         if (_bulletShoot == null)
         {
             return; // 処理を中断
@@ -104,7 +103,6 @@ public class TunkController : Character
         {
             _bulletShoot.HomingMissle(playerType);
             TriggerShootAnimation("shoot");
-
         }
     }
 
@@ -115,8 +113,28 @@ public class TunkController : Character
     }
     public override void TakeDamage(int damageAmount)
     {
+        if (IsInvulnerable)
+        {
+            Debug.Log("無敵状態のためダメージを受けない！");
+            return;
+        }
         base.TakeDamage(damageAmount);
         _currentState = State.Dead;
+    }
+    public float IncreaseSpeed(float value)
+    {
+        _moveSpeed *= (1f + value / 100f);
+        Debug.Log($"スピードアップ！新しい移動速度: {_moveSpeed}");
+        return _moveSpeed;
+    }
+    public bool IsInvulnerable
+    {
+        get { return isInvulnerable; }
+        set
+        {
+            isInvulnerable = value;
+            Debug.Log(isInvulnerable ? "無敵モード ON!" : "無敵モード OFF!");
+        }
     }
     protected override void Die()
     {

@@ -34,7 +34,6 @@ public class Bullet : MonoBehaviour
             if (hitPlayer != null && hitPlayer.playerType != shooterType)
             {
                 HandleCharacterCollision(hitPlayer);
-                Debug.Log($"Bullet hit {hitPlayer.gameObject.name} and dealt damage! Remaining Health: {hitPlayer.GetCurrentHealth()}");
                 Destroy(gameObject); // 弾を消去
             }
         }
