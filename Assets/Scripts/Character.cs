@@ -34,7 +34,7 @@ public class Character : MonoBehaviour
     }
 
     // Œ»İ‚Ì‘Ì—Í‚ğæ“¾‚·‚éƒƒ\ƒbƒh
-    public int GetCurrentHealth()
+    public int AddHealth(int value)
     {
         return currentHealth;
     }
