@@ -54,9 +54,9 @@ public class Enemy : Character
         }
     }
 
-    public override void TakeDamage(int damageAmount = 10)
+    public override void TakeDamage()
     {
-        base.TakeDamage(damageAmount);
+        base.TakeDamage();
         // 敵がダメージを受けた時の追加処理をここに追加（例：怒り状態になる）
     }
 
