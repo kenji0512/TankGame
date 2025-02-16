@@ -5,7 +5,7 @@ public class Bullet : MonoBehaviour
     [SerializeField] private float _speed = 20f;   // 弾の移動速度
     [SerializeField] private float _lifetime = 5f; // 弾の寿命（秒）
     [SerializeField] private GameObject _hitEffectPrefab; // 衝突エフェクトのプレハブ
-    [SerializeField] private int _damageAmount = 10; // ダメージ量
+    [SerializeField] private float _bulletdamageAmount = 10; // ダメージ量
     public PlayerType shooterType; // 発射者のプレイヤータイプ
     private Vector3 _direction;  // 弾の移動方向
 
@@ -56,7 +56,7 @@ public class Bullet : MonoBehaviour
 
     protected virtual void HandleCharacterCollision(TunkController hitPlayer)
     {
-        hitPlayer.TakeDamage(_damageAmount); // プレイヤーにダメージを与える
+        hitPlayer.TakeDamage(); // プレイヤーにダメージを与える
         CreateHitEffect(); // 衝突エフェクトを生成
         Destroy(gameObject); // 弾を破壊
     }

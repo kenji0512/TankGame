@@ -1,9 +1,12 @@
+using NetcodePlus.Demo;
 using UnityEngine;
 
 public class Character : MonoBehaviour
 {
     [SerializeField] protected int maxHealth = 100;
-    protected int currentHealth;
+    protected float currentHealth;
+    public float _damageAmount { get; set; } = 10;
+    Item item;    // Item クラスのインスタンスを参照
 
     protected virtual void Awake()
     {
@@ -12,12 +15,21 @@ public class Character : MonoBehaviour
     }
 
     // ダメージを受けたときに呼び出されるメソッド
-    public virtual void TakeDamage(int damageAmount = 10)
+    public virtual void TakeDamage()
     {
         Debug.Log($"{gameObject.name} before damage: {currentHealth}"); // ダメージ前のHP表示
-
-        currentHealth -= damageAmount;
-        Debug.Log($"{gameObject.name} took {damageAmount} damage. Remaining Health: {currentHealth}");
+        Debug.Log($"{gameObject.name} applying damage: {_damageAmount}"); // ダメージ量のログ
+        // パワーアップが有効な場合、ダメージに追加で 10 を加える
+        if (item != null && item.OnPowerUp)
+        {
+            currentHealth -= (_damageAmount + item._value);
+            Debug.Log($"{gameObject.name} OnPowerUp is active! Extra damage applied.");
+        }
+        else
+        {
+            currentHealth -= _damageAmount;
+        }
+        Debug.Log($"{gameObject.name} took {_damageAmount} damage. Remaining Health: {currentHealth}");
 
         if (currentHealth <= 0)
         {
@@ -31,11 +43,5 @@ public class Character : MonoBehaviour
     {
         Debug.Log($"{gameObject.name} has died.");
         Destroy(gameObject); // オブジェクトを破壊
-    }
-
-    // 現在の体力を取得するメソッド
-    public int AddHealth(int value)
-    {
-        return currentHealth;
     }
 }

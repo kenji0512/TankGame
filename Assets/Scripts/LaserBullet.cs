@@ -28,7 +28,7 @@ public class LaserBullet : MonoBehaviour
             TunkController hitplayer = hit.collider.GetComponent<TunkController>();
             if (hitplayer != null)
             {
-                hitplayer.TakeDamage(_damage);
+                hitplayer.TakeDamage();
                 end = hit.point; // レーザーの終点を敵に変更
             }
         }
