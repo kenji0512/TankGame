@@ -9,12 +9,13 @@ public class Bullet : MonoBehaviour
     public PlayerType shooterType; // 発射者のプレイヤータイプ
     private Vector3 _direction;  // 弾の移動方向
 
+    public float BulletdamageAmount { get => _bulletdamageAmount; set => _bulletdamageAmount = value; }
+
     protected virtual void Start()
     {
         // 一定時間後に弾を自動で破壊
         Destroy(gameObject, _lifetime);
     }
-
     public void SetDirection(Vector3 direction)
     {
         _direction = direction.normalized; // 弾の移動方向を正規化
@@ -30,7 +31,10 @@ public class Bullet : MonoBehaviour
     {
         if (other.CompareTag("Player")) // プレイヤータグで判定
         {
+            Debug.Log($"Player hit");
+
             var hitPlayer = other.GetComponent<TunkController>(); // プレイヤーがタグ付きであればコンポーネント取得
+
             if (hitPlayer != null && hitPlayer.playerType != shooterType)
             {
                 HandleCharacterCollision(hitPlayer);
@@ -56,7 +60,7 @@ public class Bullet : MonoBehaviour
 
     protected virtual void HandleCharacterCollision(TunkController hitPlayer)
     {
-        hitPlayer.TakeDamage(); // プレイヤーにダメージを与える
+        hitPlayer.TakeDamage(BulletdamageAmount); // プレイヤーにダメージを与える
         CreateHitEffect(); // 衝突エフェクトを生成
         Destroy(gameObject); // 弾を破壊
     }

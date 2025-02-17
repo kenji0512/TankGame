@@ -1,4 +1,3 @@
-using NetcodePlus.Demo;
 using System.Collections;
 using UnityEngine;
 
@@ -26,19 +25,8 @@ public class Item : MonoBehaviour
     public ParticleSystem pickupEffect; // 取得時のエフェクト（後で追加用）
 
     private bool _taken = false;
-    //private float _timer = 0f;
     private float originalMoveSpeed; // 元の移動速度を保持するための変数
     private float originalDamage;
-    public bool OnPowerUp = false;
-
-    //private void Update()
-    //{
-    //    if (!_taken) return;
-
-    //    // アイテムが取られた後に再出現するコルーチンを開始
-    //    StartCoroutine(DeactivateAndRespawnCoroutine());
-    //    _taken = false;  // 1度だけ実行されるようにフラグをリセット
-    //}
 
     public void Take(TunkController tunkController)
     {
@@ -68,25 +56,20 @@ public class Item : MonoBehaviour
             }
         }
     }
-    private void ApplyPowerBoost (TunkController tunkController)
+    private void ApplyPowerBoost(TunkController tunkController)
     {
         Debug.Log($"{tunkController.name} にパワーアップ適用");
-
-        tunkController.OnPowerUp = true;
-        //originalDamage = tunkController._damageAmount;// 元のパワーを保存
-        //tunkController._damageAmount += _value;
+        tunkController.onPowerUp = true;
+        originalDamage = tunkController._damageAmount;// 元のパワーを保存
+        tunkController._damageAmount += _value;
         StartCoroutine(ResetPowerAfterDuration(tunkController));
-        //if (character.TakeDamage())
-        //{
-        //    character.IsPowerBoosted = true;
-        //    tunkController.AttackPower *= 1.5f; // 攻撃力1.5倍
-        //    StartCoroutine(ResetPowerAfterDuration(tunkController));
-        //}
     }
     private IEnumerator ResetPowerAfterDuration(TunkController tunkController)
     {
         yield return new WaitForSeconds(_duration);
-        tunkController.OnPowerUp = false;
+        tunkController._damageAmount = originalDamage;
+        tunkController.onPowerUp = false;
+        Debug.Log($"false");
     }
     private void ApplySpeedBoost(TunkController tunkController)
     {

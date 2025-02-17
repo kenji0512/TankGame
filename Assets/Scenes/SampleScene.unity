@@ -5686,12 +5686,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   type: 10
   _value: 10
-  _duration: 10
+  _duration: 36.68
   _itemRespawnDuration: 10
   sprite: {fileID: 492253359}
   sphereCollider: {fileID: 492253357}
   pickupEffect: {fileID: 0}
-  OnPowerUp: 0
 --- !u!212 &492253359
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -5756,7 +5755,7 @@ Transform:
   m_GameObject: {fileID: 492253356}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 9.64, y: 2.1587, z: 3.63}
+  m_LocalPosition: {x: 10.06, y: 2.48, z: 3.63}
   m_LocalScale: {x: 0.2, y: 0.2, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -5879,7 +5878,6 @@ MonoBehaviour:
   sprite: {fileID: 621570278}
   sphereCollider: {fileID: 621570280}
   pickupEffect: {fileID: 0}
-  OnPowerUp: 0
 --- !u!212 &621570278
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -6132,7 +6130,6 @@ MonoBehaviour:
   sprite: {fileID: 864124452}
   sphereCollider: {fileID: 864124450}
   pickupEffect: {fileID: 0}
-  OnPowerUp: 0
 --- !u!212 &864124452
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -6557,6 +6554,10 @@ PrefabInstance:
       value: 1.874
       objectReference: {fileID: 0}
     - target: {fileID: 223239186245835037, guid: 00f825b659e52674c89009710471cdba, type: 3}
+      propertyPath: _bulletpre
+      value: 
+      objectReference: {fileID: 8605363811379932059, guid: 4bea4e61271602d41bf8e93d7ec6ee8a, type: 3}
+    - target: {fileID: 223239186245835037, guid: 00f825b659e52674c89009710471cdba, type: 3}
       propertyPath: _delayTime
       value: 0.5
       objectReference: {fileID: 0}
@@ -6572,6 +6573,10 @@ PrefabInstance:
       propertyPath: _shootpointR
       value: 
       objectReference: {fileID: 1147566338}
+    - target: {fileID: 223239186245835037, guid: 00f825b659e52674c89009710471cdba, type: 3}
+      propertyPath: tunkController
+      value: 
+      objectReference: {fileID: 1907112537}
     - target: {fileID: 223239186245835037, guid: 00f825b659e52674c89009710471cdba, type: 3}
       propertyPath: _roketBulletpre
       value: 
@@ -6615,6 +6620,10 @@ PrefabInstance:
     - target: {fileID: 2797129902795045934, guid: 00f825b659e52674c89009710471cdba, type: 3}
       propertyPath: m_Layer
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2797129902795045934, guid: 00f825b659e52674c89009710471cdba, type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 2797129902795045935, guid: 00f825b659e52674c89009710471cdba, type: 3}
       propertyPath: m_LocalPosition.x
@@ -6774,6 +6783,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   maxHealth: 100
+  onPowerUp: 0
   _moveActionName: Move
   _shootActionName: Shoot
   _bulletShoot: {fileID: 220989015}
@@ -7579,6 +7589,10 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 7622624725635748985, guid: 4a1b02cd8f796dc4c9d5c5afce18d0f6, type: 3}
+      propertyPath: _bulletpre
+      value: 
+      objectReference: {fileID: 8605363811379932059, guid: 4bea4e61271602d41bf8e93d7ec6ee8a, type: 3}
+    - target: {fileID: 7622624725635748985, guid: 4a1b02cd8f796dc4c9d5c5afce18d0f6, type: 3}
       propertyPath: _delayTime
       value: 0.5
       objectReference: {fileID: 0}
@@ -7590,6 +7604,10 @@ PrefabInstance:
       propertyPath: _shootpointR
       value: 
       objectReference: {fileID: 1136516198}
+    - target: {fileID: 7622624725635748985, guid: 4a1b02cd8f796dc4c9d5c5afce18d0f6, type: 3}
+      propertyPath: tunkController
+      value: 
+      objectReference: {fileID: 1070665796}
     - target: {fileID: 7622624725635748985, guid: 4a1b02cd8f796dc4c9d5c5afce18d0f6, type: 3}
       propertyPath: _roketBulletpre
       value: 
@@ -7881,6 +7899,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   maxHealth: 100
+  onPowerUp: 0
   _moveActionName: Move
   _shootActionName: Shoot
   _bulletShoot: {fileID: 480498684}
