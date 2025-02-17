@@ -6,7 +6,7 @@ public class BulletShoot : MonoBehaviour
     [SerializeField] private float _initialDirectionY = 1.0f; // 初期射出方向
     [SerializeField] private float _delayTime = 0.5f;
 
-    public GameObject _bulletpre; // 弾のプレハブ
+    public Bullet _bulletpre; // 弾のプレハブ
     public GameObject _roketBulletpre; // 弾のプレハブ
     public GameObject _homingBulletpre; // 弾のプレハブ
     public Transform _shootpoint; // 弾を発射する位置
@@ -15,6 +15,7 @@ public class BulletShoot : MonoBehaviour
     public GameObject _shootEffectPrefab;
     public float shootEffectLifetime = 2f; // 発射エフェクトの寿命（秒）
     public PlayerType shooterType;
+    [SerializeField] TunkController tunkController;
 
     public GameObject HomingBulletPrefab => _homingBulletpre; // プロパティとして公開
 
@@ -36,13 +37,17 @@ public class BulletShoot : MonoBehaviour
 
         // 弾を生成して初期位置と方向を設定
         if (_bulletpre != null && _shootpoint != null)
-        { 
-            GameObject bullet = Instantiate(_bulletpre, _shootpoint.position, _shootpoint.rotation);
-            Bullet bulletScript = bullet.GetComponent<Bullet>();
-            if (bulletScript != null)
+        {
+            Bullet bullet = Instantiate(_bulletpre, _shootpoint.position, _shootpoint.rotation);
+            if (tunkController.onPowerUp)
             {
-                bulletScript.shooterType = shooterType;
-                bulletScript.SetDirection(direction); // 発射方向を設定
+                bullet.BulletdamageAmount += 10;
+                Debug.Log($"-10damage");
+            }
+            if (bullet != null)
+            {
+                bullet.shooterType = shooterType;
+                bullet.SetDirection(direction); // 発射方向を設定
             }
         }
         else

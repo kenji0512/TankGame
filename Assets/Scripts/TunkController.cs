@@ -1,7 +1,6 @@
 using System;
 using UnityEngine;
 using UnityEngine.InputSystem;
-using static UnityEngine.Rendering.DebugUI;
 
 public class TunkController : Character
 {
@@ -16,7 +15,6 @@ public class TunkController : Character
     public PlayerType playerType;    // プレイヤーのタイプ
     private State _currentState = State.Idle; // プレイヤーの現在の状態
     private bool isInvulnerable = false; //アイテム取得時に 無敵true になる
-    public bool OnPowerUp = false;  // アイテム取得時に パワーアップtrue になる
     private Animator _animator;
     private Rigidbody _rb;
 
@@ -24,7 +22,7 @@ public class TunkController : Character
     {
         base.Awake(); // StartではなくAwakeを呼ぶ
         _playerInput = GetComponent<PlayerInput>();
-        _playerInput.notificationBehavior = PlayerNotifications.InvokeUnityEvents;       
+        _playerInput.notificationBehavior = PlayerNotifications.InvokeUnityEvents;
         // Player 1用またはPlayer 2用のアクションマップを設定
         if (playerType == PlayerType.Player1)
         {
@@ -79,7 +77,7 @@ public class TunkController : Character
     }//移動処理
 
     void HandleShooting(InputAction.CallbackContext context)
-    { 
+    {
         if (_bulletShoot == null)
         {
             return; // 処理を中断
@@ -113,45 +111,29 @@ public class TunkController : Character
         _animator.SetTrigger(triggerName);
         _currentState |= State.Shooting;
     }
-    public override void TakeDamage()
+
+    public override void TakeDamage(float damage)
     {
         Debug.Log($"{gameObject.name} before damage: {currentHealth}");
-        float finalDamage = _damageAmount;
-        if (OnPowerUp)
-        {
-            finalDamage += 10;  // パワーアップ時の追加ダメージ
-            Debug.Log($"{gameObject.name} OnPowerUp is active! Extra damage applied.");
-        }
+        currentHealth -= damage;
         if (IsInvulnerable)
         {
             Debug.Log("無敵状態のためダメージを受けない！");
             return;
         }
-        currentHealth -= finalDamage;
         if (currentHealth <= 0)
         {
             currentHealth = 0;  // HPが負の値にならないようにする
             Die();
         }
-        //base.TakeDamage();
+
+        if (currentHealth <= 0)
+        {
+            Die();
+        }
         _currentState = State.Dead;
     }
-    //public  ApplyPowerBoost
-    //{
-    //    get { return isInvulnerable; }
-    //    set
-    //    {
-    //        isInvulnerable = value;
-    //        Debug.Log(isInvulnerable ? "無敵モード ON!" : "無敵モード OFF!");
-    //    }
-    //}
 
-    //public float IncreaseSpeed(float value)
-    //{
-    //    _moveSpeed *= (1f + value / 100f);
-    //    Debug.Log($"スピードアップ！新しい移動速度: {_moveSpeed}");
-    //    return _moveSpeed;
-    //}
     public bool IsInvulnerable
     {
         get { return isInvulnerable; }
