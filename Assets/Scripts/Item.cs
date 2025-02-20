@@ -27,6 +27,8 @@ public class Item : MonoBehaviour
     private bool _taken = false;
     private float originalMoveSpeed; // 元の移動速度を保持するための変数
     private float originalDamage;
+    private ParticleSystem currentEffect; // 現在の効果のエフェクト
+
 
     public void Take(TunkController tunkController)
     {
@@ -42,6 +44,9 @@ public class Item : MonoBehaviour
     {
         if (tunkController != null)
         {
+            currentEffect = Instantiate(pickupEffect, tunkController.transform.position + Vector3.zero, Quaternion.identity);
+            currentEffect.transform.SetParent(tunkController.transform); // 効果エフェクトがプレイヤーに追従するように設定
+
             switch (type)
             {
                 case PowerupType.Power:
@@ -69,7 +74,9 @@ public class Item : MonoBehaviour
         yield return new WaitForSeconds(_duration);
         tunkController._damageAmount = originalDamage;
         tunkController.onPowerUp = false;
-        Debug.Log($"false");
+        currentEffect.Stop(); // エフェクトを停止
+        Destroy(currentEffect);
+        Debug.Log(currentEffect + $"destroy");
     }
     private void ApplySpeedBoost(TunkController tunkController)
     {
@@ -81,6 +88,9 @@ public class Item : MonoBehaviour
     {
         yield return new WaitForSeconds(_duration);
         tunkController._moveSpeed = originalMoveSpeed;
+        currentEffect.Stop(); // エフェクトを停止
+        Destroy(currentEffect);
+        Debug.Log(currentEffect + $"destroy");
     }
     private void ApplyInvulnerability(TunkController tunkController)
     {
@@ -92,6 +102,9 @@ public class Item : MonoBehaviour
     {
         yield return new WaitForSeconds(_duration);
         tankController.IsInvulnerable = false;  // 無敵を無効にする
+        currentEffect.Stop(); // エフェクトを停止
+        Destroy(currentEffect);
+        Debug.Log(currentEffect +$"destroy");
     }
 
     private IEnumerator DeactivateAndRespawnCoroutine()

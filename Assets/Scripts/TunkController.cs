@@ -116,6 +116,12 @@ public class TunkController : Character
     {
         Debug.Log($"{gameObject.name} before damage: {currentHealth}");
         currentHealth -= damage;
+        if (hpBar == null)
+        {
+            Debug.LogError("HPバーがアタッチされていません！");
+        }
+        hpBar.UpdateHP(currentHealth,maxHealth);
+
         if (IsInvulnerable)
         {
             Debug.Log("無敵状態のためダメージを受けない！");
@@ -148,6 +154,8 @@ public class TunkController : Character
         Debug.Log($"{gameObject.name} has died.");
         GameManager.Instance.RemovePlayer(this);
         OnPlayerDied?.Invoke(this);
+        string winner = gameObject.name == "TankBlue(Player)" ? "TankRed(Enemy)" : "TankBlue(Player)";
+        FindObjectOfType<GameManager>().CheckWinner(winner);
         base.Die();
     }
 }

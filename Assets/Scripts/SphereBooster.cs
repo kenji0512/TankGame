@@ -5,11 +5,11 @@ public class SphereBooster : Bullet
     [SerializeField] private float _forceMagnitude = 10.0f; // 力の大きさ
     [SerializeField] private float _gravity = -9.81f; // 重力の強さ
     private float traveledDistance = 0f; // 累計移動距離
-    private const float maxDistance = 50f; // 最大射程
+    private const float maxDistance = 30f; // 最大射程
 
     private Vector3 _velocity; // 初速度
     private Vector3 _gravityEffect; // 重力による影響
-   //public PlayerType shooterType;
+                                    //public PlayerType shooterType;
 
     // 発射位置を渡して初速度を設定
     public void Initialize(Vector3 initialDirection)
