@@ -1,11 +1,15 @@
 using NetcodePlus.Demo;
 using UnityEngine;
 
+
 public class Character : MonoBehaviour
 {
     [SerializeField] protected int maxHealth = 100;
     protected float currentHealth;
+
     public bool onPowerUp = false;  // アイテム取得時に パワーアップtrue になる
+    public HPBar hpBar;
+
 
     public float _damageAmount { get; set; } = 10;
 

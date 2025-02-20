@@ -17,6 +17,7 @@ public class GameManager : MonoBehaviour
     public event GameEvent OnGameResumed;
     public event GameEvent OnGameOver;
 
+
     float _timer = 0.0f;
 
     private void Awake()
@@ -106,9 +107,31 @@ public class GameManager : MonoBehaviour
     private void TransitionToNextScene()
     {
         Debug.Log("Transitioning to CrearScene...");
+        if (_players.Count == 1) // 1人だけ残っているなら
+        {
+            Time.timeScale = 1f; // 時間を再開
 
-        // ここでシーンを移行する（例: "CrearScene"という名前のシーンへ）
-        SceneManager.LoadScene("CrearScene");
+            PlayerType winner = _players[0].playerType; // 残ったプレイヤーを勝者にする
+            if (winner == PlayerType.Player1)
+            {
+                SceneManager.LoadScene("Player1WinScene"); // Player1が勝った場合
+            }
+            else if (winner == PlayerType.Player2)
+            {
+                SceneManager.LoadScene("Player2WinScene"); // Player2が勝った場合
+            }
+        }
+    }
+    public void CheckWinner(string winner)
+    {
+        if (winner == "TankBlue(Player)")
+        {
+            SceneManager.LoadScene("Player1WinScene");  // Player1 勝利画面へ
+        }
+        else if (winner == "TankRed(Enemy)")
+        {
+            SceneManager.LoadScene("Player2WinScene");  // Player2 勝利画面へ
+        }
     }
 }
 

@@ -34,7 +34,10 @@ public class Bullet : MonoBehaviour
             Debug.Log($"Player hit");
 
             var hitPlayer = other.GetComponent<TunkController>(); // プレイヤーがタグ付きであればコンポーネント取得
-
+            if (hitPlayer == null)
+            {
+                Debug.LogError("ヒットしたオブジェクトが TunkController を持っていません！");
+            }
             if (hitPlayer != null && hitPlayer.playerType != shooterType)
             {
                 HandleCharacterCollision(hitPlayer);

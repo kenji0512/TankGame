@@ -16,6 +16,10 @@ public class HomingMissile : Bullet
     protected override void Start()
     {
         base.Start();
+        // 発射時の向きを補正（Z軸がねじれないようにする）
+        Vector3 forwardDirection = transform.forward;
+        forwardDirection.y = 0; // 上下方向のズレをなくす
+        transform.forward = forwardDirection;
 
         // ターゲットを探す（例：Playerタグのオブジェクトを追尾）
         Transform targetObject = FindClosestTarget();
@@ -32,7 +36,7 @@ public class HomingMissile : Bullet
 
     private void Update()
     {
-        if (_target == null || Vector3.Distance(transform.position, _target.position) > 50f)
+        if (_target == null || Vector3.Distance(transform.position, _target.position) > maxRange)
         {
             // ターゲットがない、またはターゲットが一定距離以上離れている場合、再検索
             _target = FindClosestTarget();
@@ -42,12 +46,15 @@ public class HomingMissile : Bullet
             // ターゲット方向を計算
             Vector3 directionToTarget = (_target.position - transform.position).normalized;
 
-            // 現在の方向をターゲット方向に向けて徐々に回転
-            Vector3 newDirection = Vector3.RotateTowards(transform.forward, directionToTarget,
-                                                         _rotationSpeed * Mathf.Deg2Rad * Time.deltaTime, 0f);
+            // Z軸の回転を無視するようにする
+            directionToTarget.y = 0; // 高さ方向の回転を無視
+            // 目標方向を向ける（y軸を固定）
+            Quaternion targetRotation = Quaternion.LookRotation(directionToTarget);
 
             // 回転を適用
-            transform.rotation = Quaternion.LookRotation(newDirection);
+            //transform.rotation = Quaternion.LookRotation(newDirection);
+            // 徐々に回転
+            transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, _rotationSpeed * Time.deltaTime);
 
             // 前進
             transform.position += transform.forward * _homingSpeed * Time.deltaTime;
