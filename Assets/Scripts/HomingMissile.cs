@@ -88,7 +88,6 @@ public class HomingMissile : Bullet
                 closestTarget = potentialTarget.transform;
             }
         }
-
         return closestTarget;
     }
 
@@ -102,6 +101,8 @@ public class HomingMissile : Bullet
     {
         base.HandleWallCollision(breakableWall);
         Debug.Log("Homing bullet collided with a wall!");
-        Destroy(this.gameObject);
+        // Destroy ではなくプールに戻す
+        // Destroy をやめて、プールに戻す
+        myPool.Catch("HomingMissile", this.gameObject);
     }
 }

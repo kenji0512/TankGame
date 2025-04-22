@@ -5,14 +5,16 @@ using UnityEngine.InputSystem;
 public class TunkController : Character
 {
     public static event Action<TunkController> OnPlayerDied;
-    private PlayerInput _playerInput;
+    [SerializeField] private BulletShoot _bulletShoot;  // BulletShootコンポーネント
+
     [SerializeField] private string _moveActionName = "Move";
     [SerializeField] private string _shootActionName = "Shoot";
-    [SerializeField] private BulletShoot _bulletShoot;  // BulletShootコンポーネント
     public float _moveSpeed = 5f; // タンクの移動速度
     public float _turnSpeed = 100f;   // タンクの回転速度
-    private Transform _firePoint;//Transformはpriveteにする
     public PlayerType playerType;    // プレイヤーのタイプ
+
+    private PlayerInput _playerInput;
+    private Transform _firePoint;//Transformはpriveteにする
     private State _currentState = State.Idle; // プレイヤーの現在の状態
     private bool isInvulnerable = false; //アイテム取得時に 無敵true になる
     private Animator _animator;
@@ -78,6 +80,7 @@ public class TunkController : Character
 
     void HandleShooting(InputAction.CallbackContext context)
     {
+        Quaternion rotation = default;
         if (_bulletShoot == null)
         {
             return; // 処理を中断
@@ -87,7 +90,7 @@ public class TunkController : Character
         if (_playerInput.actions[_shootActionName].triggered)
         {
             // 通常弾の発射
-            _bulletShoot.Shoot(playerType, transform.forward);
+            _bulletShoot.Shoot(playerType, transform.forward,rotation);
             TriggerShootAnimation("shoot");
         }
 
@@ -95,13 +98,13 @@ public class TunkController : Character
         if (context.action.name == "RocketShoot") // ロケット弾の場合のチェック
         {
             Debug.Log($"Rocket Shoot by {playerType}"); // ロケット弾の発射が呼ばれたことを確認
-            _bulletShoot.RocketShoot(playerType);
+            _bulletShoot.RocketShoot(playerType,rotation);
             TriggerShootAnimation("rocketShoot");
         }
         //ホーミング弾が発射
         if (context.action.name == "HomingShoot")
         {
-            _bulletShoot.HomingMissle(playerType);
+            _bulletShoot.HomingMissle(playerType,transform.forward,rotation);
             TriggerShootAnimation("shoot");
         }
     }
@@ -132,11 +135,6 @@ public class TunkController : Character
             currentHealth = 0;  // HPが負の値にならないようにする
             Die();
         }
-
-        if (currentHealth <= 0)
-        {
-            Die();
-        }
         _currentState = State.Dead;
     }
 
@@ -155,7 +153,7 @@ public class TunkController : Character
         GameManager.Instance.RemovePlayer(this);
         OnPlayerDied?.Invoke(this);
         string winner = gameObject.name == "TankBlue(Player)" ? "TankRed(Enemy)" : "TankBlue(Player)";
-        FindObjectOfType<GameManager>().CheckWinner(winner);
+        FindAnyObjectByType<GameManager>().CheckWinner(winner);
         base.Die();
     }
 }
