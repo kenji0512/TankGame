@@ -1,4 +1,6 @@
+using System;
 using System.Collections;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class BulletShoot : MonoBehaviour
@@ -6,18 +8,22 @@ public class BulletShoot : MonoBehaviour
     [SerializeField] private float _initialDirectionY = 1.0f; // 初期射出方向
     [SerializeField] private float _delayTime = 0.5f;
 
-    public Bullet _bulletpre; // 弾のプレハブ
-    public GameObject _roketBulletpre; // 弾のプレハブ
-    public GameObject _homingBulletpre; // 弾のプレハブ
     public Transform _shootpoint; // 弾を発射する位置
     public Transform _shootpointR; // 弾を発射する位置
     public Transform _shootpointH; // 弾を発射する位置
     public GameObject _shootEffectPrefab;
     public float shootEffectLifetime = 2f; // 発射エフェクトの寿命（秒）
-    public PlayerType shooterType;
-    [SerializeField] TunkController tunkController;
 
-    public GameObject HomingBulletPrefab => _homingBulletpre; // プロパティとして公開
+    public PlayerType shooterType;
+
+    [SerializeField] TunkController tunkController;
+    [SerializeField] private ObjectPool _bulletPool;
+
+    [Header("弾のタグ設定")]
+    [SerializeField] private string _normalBulletTag = "NormalBullet";
+    [SerializeField] private string _rocketBulletTag = "RocketBullet";
+    [SerializeField] private string _homingBulletTagA = "HomingBullet_Blue";
+    [SerializeField] private string _homingBulletTagB = "HomingBullet_Red";
 
     public void Awake()
     {
@@ -26,19 +32,17 @@ public class BulletShoot : MonoBehaviour
             Debug.LogError("_shootpoint is not assigned.");
         }
     }
-    public void Shoot(PlayerType shooterType, Vector3 direction)
+    public void Shoot(PlayerType shooterType, Vector3 direction, Quaternion rotation)
     {
-        //発射エフェクトを生成
-        if (_shootEffectPrefab != null)
-        {
-            GameObject shootEffect = Instantiate(_shootEffectPrefab, _shootpoint.position, _shootpoint.rotation);
-            Destroy(shootEffect, shootEffectLifetime); // エフェクトを一定時間後に消去
-        }
+        GameObject bulletObject = _bulletPool.Release(_normalBulletTag, _shootpoint.position, rotation);//_bulletPoolを一個でまとめるか種類数に応じた数作るか検討
+        Bullet bullet = bulletObject.GetComponent<Bullet>();
+        bullet.transform.position = _shootpoint.position;
+        bullet.transform.rotation = _shootpoint.rotation;
 
         // 弾を生成して初期位置と方向を設定
-        if (_bulletpre != null && _shootpoint != null)
+        if (bulletObject != null && _shootpoint != null)
         {
-            Bullet bullet = Instantiate(_bulletpre, _shootpoint.position, _shootpoint.rotation);
+            //Instantiate(bulletObject, _shootpoint.position, _shootpoint.rotation);
             if (tunkController.onPowerUp)
             {
                 bullet.BulletdamageAmount += 10;
@@ -52,83 +56,142 @@ public class BulletShoot : MonoBehaviour
         }
         else
         {
-            Debug.LogError("Bullet Prefab or Shoot Point is not assigned.");
+            Debug.LogError("NormalBullet Prefab or Shoot Point is not assigned.");
         }
-    }
-    public void RocketShoot(PlayerType shooter)
-    {
         //発射エフェクトを生成
         if (_shootEffectPrefab != null)
         {
             GameObject shootEffect = Instantiate(_shootEffectPrefab, _shootpoint.position, _shootpoint.rotation);
             Destroy(shootEffect, shootEffectLifetime); // エフェクトを一定時間後に消去
         }
-
-        // 発射を遅延させる
-        StartCoroutine(DelayedShoot(shooter));
     }
-    public void HomingMissle(PlayerType shooter)
+    public void RocketShoot(PlayerType shooter, Quaternion rotation)
     {
-        if (_homingBulletpre == null)
-        {
-            Debug.LogError("BulletShoot is not assigned.");
-        }
-
-        if (_shootpointH == null)
-        {
-            Debug.LogError("Shoot Point is not assigned.");
-        }
-
-        // 他の参照オブジェクトも同様に確認
-        if (shooter == null)
-        {
-            Debug.LogError("Homing target is null.");
-        }
+        //発射エフェクトを生成
         if (_shootEffectPrefab != null)
         {
-            GameObject shootEffect = Instantiate(_shootEffectPrefab, _shootpoint.position, _shootpoint.rotation);
+            GameObject shootEffect = Instantiate(_shootEffectPrefab, _shootpointR.position, _shootpointR.rotation);
             Destroy(shootEffect, shootEffectLifetime); // エフェクトを一定時間後に消去
         }
-        if (_homingBulletpre != null && _shootpointH != null)
+
+        // 発射を遅延させる
+        StartCoroutine(DelayedShoot(shooter,rotation));
+    }
+    public void HomingMissle(PlayerType shooter, Vector3 direction, Quaternion rotation)
+    {
+        //shooter に応じてホーミング弾のタグを決定
+        string selectedHomingTag = shooter switch
         {
-            GameObject homingBullet = Instantiate(_homingBulletpre, _shootpointH.position, _shootpointH.rotation);
-            HomingMissile homingscript = homingBullet.GetComponent<HomingMissile>();
-            if (homingscript != null)
-            {
-                homingscript.Initialize(shooter);
-            }
-            else
-            {
-                Debug.LogError("HomingMissile script not found on homing bullet prefab.");
-            }
+            PlayerType.Player1 => _homingBulletTagA, // 青弾
+            PlayerType.Player2 => _homingBulletTagB, // 赤弾
+            _ => _homingBulletTagA, // デフォルトは青
+        };
+        //GameObject bulletObject = _bulletPool.Release(_homingBulletTagA, transform.position);
+        //GameObject bulletObjectB = _bulletPool.Release(_homingBulletTagB, transform.position);
+        GameObject bulletObject = _bulletPool.Release(selectedHomingTag, _shootpointH.position,rotation);
+
+        if (bulletObject == null)
+        {
+            //bulletObject.transform.rotation = Quaternion.LookRotation(direction);
+            Debug.LogError("ObjectPool から HomingBullet が取得できませんでした！");
+            return; // null なら即 return してアクセスを防ぐ
+        }
+        HomingMissile missile = bulletObject.GetComponent<HomingMissile>();
+        if (missile != null)
+        {
+            missile.Initialize(shooter); // 追尾弾に発射主の情報を渡す
         }
         else
         {
-            Debug.LogError("Homing Bullet Prefab or Shoot Point is not assigned.");
+            Debug.LogError("HomingBullet に HomingMissile コンポーネントが付いていません！");
         }
+        if (_shootpointH != null && _shootEffectPrefab != null)
+        {
+            GameObject shootEffect = Instantiate(_shootEffectPrefab, _shootpointH.position, _shootpointH.rotation);
+            Destroy(shootEffect, shootEffectLifetime);
+        }
+        //else
+        //{
+        //    Debug.LogError("ObjectPool から HomingBullet が取得できませんでした！");
+        //}
+
+        //bulletObject.transform.rotation = _shootpointH.rotation;
+        //if (_shootpointH == null)
+        //{
+        //    Debug.LogError("Shoot Point is not assigned.");
+        //}
+        //if (_shootEffectPrefab != null)
+        //{
+        //    GameObject shootEffect = Instantiate(_shootEffectPrefab, _shootpointH.position, _shootpointH.rotation);
+        //    Destroy(shootEffect, shootEffectLifetime); // エフェクトを一定時間後に消去
+        //}
+        //HomingMissile homingscript = bulletObject.GetComponent<HomingMissile>();
+
+        //if (bulletObject != null && _shootpointH != null)
+        //{
+        //    //GameObject homingBullet = Instantiate(bulletObject, _shootpointH.position, _shootpointH.rotation);
+        //    if (homingscript != null)
+        //    {
+        //        homingscript.Initialize(shooter);
+        //    }
+        //    else
+        //    {
+        //        Debug.LogError("HomingMissile script not found on homing bullet prefab.");
+        //    }
+        //}
+        //else
+        //{
+        //    Debug.LogError("Homing Bullet Prefab or Shoot Point is not assigned.");
+        //}
     }
-    private IEnumerator DelayedShoot(PlayerType shooter)
+    private IEnumerator DelayedShoot(PlayerType shooter,Quaternion rotation)
     {
         // 指定された遅延時間だけ待機
         yield return new WaitForSeconds(_delayTime);
-
-        // 弾を生成して初期位置と方向を設定
-        if (_roketBulletpre != null && _shootpointR != null)
+        if (_shootpointR == null)
         {
-            GameObject roketBullet = Instantiate(_roketBulletpre, _shootpointR.position, _shootpointR.rotation);
-            SphereBooster boosterScript = roketBullet.GetComponent<SphereBooster>();
+            Debug.LogError("Rocket shoot point is not assigned.");
+            yield break;
+        }
+        GameObject bulletObject = _bulletPool.Release(_rocketBulletTag, _shootpointR.position, rotation);
 
-            //roketBullet.GetComponent<SphereBooster>().Initialize(direction, shooter); // 発射方向を渡す
-            if (boosterScript != null)
-            {
-                boosterScript.Initialize(new Vector3(transform.forward.x, transform.forward.y + _initialDirectionY, transform.forward.z)); // direction を渡す
-                boosterScript.shooterType = shooter;
-                roketBullet.GetComponent<SphereBooster>().shooterType = shooter; // shooterType を渡す
-            }
+        if (bulletObject == null)
+        {
+            Debug.LogError("Rocket bullet could not be released from pool.");
+            yield break;
+        }
+        bulletObject.transform.position = _shootpointR.position;
+        bulletObject.transform.rotation = _shootpointR.rotation;
+        // 弾を生成して初期位置と方向を設定
+        //if (bulletObject != null && _shootpointR != null)
+        //{
+        //    GameObject roketBullet = Instantiate(bulletObject, _shootpointR.position, _shootpointR.rotation);
+        //    SphereBooster boosterScript = roketBullet.GetComponent<SphereBooster>();
+
+        //    //roketBullet.GetComponent<SphereBooster>().Initialize(direction, shooter); // 発射方向を渡す
+        //    if (boosterScript != null)
+        //    {
+        //        Vector3 launchDir = new Vector3(transform.forward.x, transform.forward.y + _initialDirectionY, transform.forward.z);
+        //        //boosterScript.Initialize(new Vector3(transform.forward.x, transform.forward.y + _initialDirectionY, transform.forward.z)); // direction を渡す
+        //        boosterScript.shooterType = shooter;
+        //        roketBullet.GetComponent<SphereBooster>().shooterType = shooter; // shooterType を渡す
+        //    }
+        //}
+        //else
+        //{
+        //    Debug.LogError("Rocket Bullet Prefab or Shoot Point is not assigned.");
+        //}
+        SphereBooster boosterScript = bulletObject.GetComponent<SphereBooster>();
+        if (boosterScript != null)
+        {
+            Vector3 launchDir = new Vector3(transform.forward.x, _initialDirectionY, transform.forward.z);
+            boosterScript.Initialize(launchDir);
+            boosterScript.shooterType = shooter;
+            //roketBullet.GetComponent<SphereBooster>().shooterType = shooter; // shooterType を渡す
         }
         else
         {
-            Debug.LogError("Rocket Bullet Prefab or Shoot Point is not assigned.");
+            Debug.LogError("SphereBooster script not found on rocket bullet.");
         }
     }
 }

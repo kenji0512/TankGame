@@ -8,13 +8,20 @@ public class Bullet : MonoBehaviour
     [SerializeField] private float _bulletdamageAmount = 10; // ダメージ量
     public PlayerType shooterType; // 発射者のプレイヤータイプ
     private Vector3 _direction;  // 弾の移動方向
+    public ObjectPool myPool; // プールから渡しておく
+
 
     public float BulletdamageAmount { get => _bulletdamageAmount; set => _bulletdamageAmount = value; }
 
     protected virtual void Start()
     {
-        // 一定時間後に弾を自動で破壊
-        Destroy(gameObject, _lifetime);
+        if (myPool == null)
+        {
+            Debug.LogWarning($"Bullet: myPool が未設定です（{gameObject.name}）");
+        }
+        StartCoroutine(AutoReturnToPool());
+
+        //Destroy(gameObject, _lifetime);
     }
     public void SetDirection(Vector3 direction)
     {
@@ -33,15 +40,16 @@ public class Bullet : MonoBehaviour
         {
             Debug.Log($"Player hit");
 
-            var hitPlayer = other.GetComponent<TunkController>(); // プレイヤーがタグ付きであればコンポーネント取得
+            TunkController hitPlayer = other.GetComponent<TunkController>(); // プレイヤーがタグ付きであればコンポーネント取得
             if (hitPlayer == null)
             {
                 Debug.LogError("ヒットしたオブジェクトが TunkController を持っていません！");
+                return;
             }
             if (hitPlayer != null && hitPlayer.playerType != shooterType)
             {
                 HandleCharacterCollision(hitPlayer);
-                Destroy(gameObject); // 弾を消去
+                ReturnToPool();
             }
         }
         else if (other.CompareTag("BreakableWall"))
@@ -50,22 +58,28 @@ public class Bullet : MonoBehaviour
             if (breakableWall != null)
             {
                 HandleWallCollision(breakableWall);
+                ReturnToPool();
             }
-            Debug.Log($"Bullet hit {breakableWall}");
+            else
+            {
+                ReturnToPool();
+            }
+            Debug.Log($"NormalBullet hit {breakableWall}");
+
         }
     }
     protected virtual void HandleWallCollision(BreakableWall breakableWall)
     {
         breakableWall.Damage(); // 壁にダメージを与える
         CreateHitEffect(); // 衝突エフェクトを生成
-        Destroy(gameObject); // 弾を破壊
+        //Destroy(gameObject); // 弾を破壊
     }
 
     protected virtual void HandleCharacterCollision(TunkController hitPlayer)
     {
         hitPlayer.TakeDamage(BulletdamageAmount); // プレイヤーにダメージを与える
         CreateHitEffect(); // 衝突エフェクトを生成
-        Destroy(gameObject); // 弾を破壊
+        ReturnToPool(); // 弾を破壊
     }
 
     protected void CreateHitEffect()
@@ -75,5 +89,22 @@ public class Bullet : MonoBehaviour
             GameObject hitEffect = Instantiate(_hitEffectPrefab, transform.position, Quaternion.identity);
             Destroy(hitEffect, 2f); // エフェクトを2秒後に消去
         }
+    }
+    protected void ReturnToPool()
+    {
+        if(myPool != null)
+        {
+            myPool.Catch("NormalBullet", gameObject);
+        }
+        else
+        {
+            Debug.LogWarning("myPool is null, destroying instead.");
+            //Destroy(gameObject);
+        }
+    }
+    private System.Collections.IEnumerator AutoReturnToPool()
+    {
+        yield return new WaitForSeconds(_lifetime);
+        ReturnToPool();
     }
 }
