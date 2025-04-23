@@ -101,7 +101,6 @@ public class HomingMissile : Bullet
     {
         base.HandleWallCollision(breakableWall);
         Debug.Log("Homing bullet collided with a wall!");
-        // Destroy ではなくプールに戻す
         // Destroy をやめて、プールに戻す
         myPool.Catch("HomingMissile", this.gameObject);
     }

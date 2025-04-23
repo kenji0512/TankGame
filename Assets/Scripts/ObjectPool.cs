@@ -34,7 +34,6 @@ public class ObjectPool : MonoBehaviour
     {
         if (!poolDictionary.ContainsKey(tag)) return null;
 
-        //GameObject obj = poolDictionary[tag].Dequeue();
         GameObject obj;
         var objectPool = poolDictionary[tag];
 
@@ -44,8 +43,6 @@ public class ObjectPool : MonoBehaviour
             if (poolConfing == null) return null;
 
             obj = Instantiate(poolConfing.prefab);
-            //Obj.SetActive(false);
-            //objectPool.Enqueue(newObj);
         }
         else
         {
@@ -76,7 +73,5 @@ public class ObjectPool : MonoBehaviour
             Debug.LogWarning($"No pool found for tag: {tag}");
 
         }
-        //obj.SetActive(false);
-        //poolDictionary[tag].Enqueue(obj);
     }
 }
