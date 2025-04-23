@@ -1,4 +1,8 @@
+using Cysharp.Threading.Tasks;
+using System;
+using System.Threading;
 using UnityEngine;
+
 
 public class Bullet : MonoBehaviour
 {
@@ -6,10 +10,38 @@ public class Bullet : MonoBehaviour
     [SerializeField] private float _lifetime = 5f; // 弾の寿命（秒）
     [SerializeField] private GameObject _hitEffectPrefab; // 衝突エフェクトのプレハブ
     [SerializeField] private float _bulletdamageAmount = 10; // ダメージ量
+
     public PlayerType shooterType; // 発射者のプレイヤータイプ
-    private Vector3 _direction;  // 弾の移動方向
     public ObjectPool myPool; // プールから渡しておく
 
+    private Vector3 _direction;  // 弾の移動方向
+    private CancellationTokenSource _cancellationTokenSource;
+
+    private void OnEnable()
+    {
+        _cancellationTokenSource = new CancellationTokenSource();
+        StartLifetimeTimerAsync(_cancellationTokenSource.Token).Forget();
+    }
+    private async UniTaskVoid StartLifetimeTimerAsync(CancellationToken token)
+    {
+        try
+        {
+            await UniTask.Delay(TimeSpan.FromSeconds(_lifetime), cancellationToken: token);
+            if (gameObject.activeInHierarchy)
+            {
+                ReturnToPool();
+            }
+        }
+        catch (OperationCanceledException)
+        {
+            // 無効化された時に発生するけど、無視してOK
+        }
+    }
+    private void OnDisable()
+    {
+        _cancellationTokenSource?.Cancel();
+        _cancellationTokenSource?.Dispose();
+    }
 
     public float BulletdamageAmount { get => _bulletdamageAmount; set => _bulletdamageAmount = value; }
 
@@ -19,9 +51,7 @@ public class Bullet : MonoBehaviour
         {
             Debug.LogWarning($"Bullet: myPool が未設定です（{gameObject.name}）");
         }
-        StartCoroutine(AutoReturnToPool());
-
-        //Destroy(gameObject, _lifetime);
+        //StartCoroutine(AutoReturnToPool());
     }
     public void SetDirection(Vector3 direction)
     {
@@ -92,19 +122,14 @@ public class Bullet : MonoBehaviour
     }
     protected void ReturnToPool()
     {
-        if(myPool != null)
+        if (myPool != null)
         {
             myPool.Catch("NormalBullet", gameObject);
         }
         else
         {
             Debug.LogWarning("myPool is null, destroying instead.");
-            //Destroy(gameObject);
+            Destroy(gameObject);
         }
-    }
-    private System.Collections.IEnumerator AutoReturnToPool()
-    {
-        yield return new WaitForSeconds(_lifetime);
-        ReturnToPool();
     }
 }

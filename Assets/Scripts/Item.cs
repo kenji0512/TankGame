@@ -1,4 +1,5 @@
-using System.Collections;
+using Cysharp.Threading.Tasks;
+using System;
 using UnityEngine;
 
 public enum PowerupType
@@ -25,8 +26,8 @@ public class Item : MonoBehaviour
     public ParticleSystem pickupEffect; // 取得時のエフェクト（後で追加用）
 
     private bool _taken = false;
-    private float originalMoveSpeed; // 元の移動速度を保持するための変数
-    private float originalDamage;
+    private float _originalMoveSpeed; // 元の移動速度を保持するための変数
+    private float _originalDamage;
     private ParticleSystem currentEffect; // 現在の効果のエフェクト
 
 
@@ -36,7 +37,7 @@ public class Item : MonoBehaviour
         {
             _taken = true;
             ApplyBonus(tunkController); // 先に効果を適用
-            StartCoroutine(DeactivateAndRespawnCoroutine());
+            DeactivateAndRespawnCoroutine().Forget();
         }
     }
 
@@ -44,8 +45,12 @@ public class Item : MonoBehaviour
     {
         if (tunkController != null)
         {
-            currentEffect = Instantiate(pickupEffect, tunkController.transform.position + Vector3.zero, Quaternion.identity);
-            currentEffect.transform.SetParent(tunkController.transform); // 効果エフェクトがプレイヤーに追従するように設定
+            if (pickupEffect != null)
+            {
+                currentEffect = Instantiate(pickupEffect, tunkController.transform.position + Vector3.zero, Quaternion.identity);
+                currentEffect.transform.SetParent(tunkController.transform); // 効果エフェクトがプレイヤーに追従するように設定
+
+            }
 
             switch (type)
             {
@@ -61,58 +66,68 @@ public class Item : MonoBehaviour
             }
         }
     }
-    private void ApplyPowerBoost(TunkController tunkController)
+    //private void ApplyPowerBoost(TunkController tunkController)
+    //{
+    //    Debug.Log($"{tunkController.name} にパワーアップ適用");
+    //    tunkController.onPowerUp = true;
+    //    originalDamage = tunkController._damageAmount;// 元のパワーを保存
+    //    tunkController._damageAmount += _value;
+    //    StartCoroutine(ResetPowerAfterDuration(tunkController));
+    //}
+    //private IEnumerator ResetPowerAfterDuration(TunkController tunkController)
+    //{
+    //    yield return new WaitForSeconds(_duration);
+    //    tunkController._damageAmount = originalDamage;
+    //    tunkController.onPowerUp = false;
+    //    currentEffect.Stop(); // エフェクトを停止
+    //    Destroy(currentEffect);
+    //    Debug.Log(currentEffect + $"destroy");
+    //}
+    private async UniTaskVoid ApplyPowerBoost(TunkController tunkController)
     {
         Debug.Log($"{tunkController.name} にパワーアップ適用");
         tunkController.onPowerUp = true;
-        originalDamage = tunkController._damageAmount;// 元のパワーを保存
+        _originalDamage = tunkController._damageAmount;
         tunkController._damageAmount += _value;
-        StartCoroutine(ResetPowerAfterDuration(tunkController));
-    }
-    private IEnumerator ResetPowerAfterDuration(TunkController tunkController)
-    {
-        yield return new WaitForSeconds(_duration);
-        tunkController._damageAmount = originalDamage;
+
+        await UniTask.Delay(TimeSpan.FromSeconds(_duration));
+
+        tunkController._damageAmount = _originalDamage;
         tunkController.onPowerUp = false;
-        currentEffect.Stop(); // エフェクトを停止
+        currentEffect.Stop();
         Destroy(currentEffect);
-        Debug.Log(currentEffect + $"destroy");
+        Debug.Log($"{currentEffect} destroy");
     }
-    private void ApplySpeedBoost(TunkController tunkController)
+
+    private async UniTaskVoid ApplySpeedBoost(TunkController tunkController)
     {
-        originalMoveSpeed = tunkController._moveSpeed; // 元のスピードを保存
+        _originalMoveSpeed = tunkController._moveSpeed; // 元のスピードを保存
         tunkController._moveSpeed *= (1f + (_value / 100f));
-        StartCoroutine(ResetSpeedAfterDuration(tunkController));
-    }
-    private IEnumerator ResetSpeedAfterDuration(TunkController tunkController)
-    {
-        yield return new WaitForSeconds(_duration);
-        tunkController._moveSpeed = originalMoveSpeed;
+
+        await UniTask.Delay(TimeSpan.FromSeconds(_duration));
+        tunkController._moveSpeed = _originalMoveSpeed;
         currentEffect.Stop(); // エフェクトを停止
         Destroy(currentEffect);
         Debug.Log(currentEffect + $"destroy");
     }
-    private void ApplyInvulnerability(TunkController tunkController)
+    private async UniTaskVoid ApplyInvulnerability(TunkController tunkController)
     {
         tunkController.IsInvulnerable = true;  // 無敵を有効にする
-        StartCoroutine(DisableInvulnerabilityAfterTime(tunkController));
-    }
 
-    private IEnumerator DisableInvulnerabilityAfterTime(TunkController tankController)
-    {
-        yield return new WaitForSeconds(_duration);
-        tankController.IsInvulnerable = false;  // 無敵を無効にする
+        await UniTask.Delay(TimeSpan.FromSeconds(_duration));
+
+        tunkController.IsInvulnerable = false;  // 無敵を無効にする
         currentEffect.Stop(); // エフェクトを停止
         Destroy(currentEffect);
-        Debug.Log(currentEffect +$"destroy");
+        Debug.Log(currentEffect + $"destroy");
     }
 
-    private IEnumerator DeactivateAndRespawnCoroutine()
+    private async UniTaskVoid DeactivateAndRespawnCoroutine()
     {
         sprite.enabled = false; // アイテムを非表示にする
         sphereCollider.enabled = false; // コライダーを無効にする
 
-        yield return new WaitForSeconds(_itemRespawnDuration); // 休止時間を待つ
+        await UniTask.Delay(TimeSpan.FromSeconds(_itemRespawnDuration));// 休止時間を待つ
 
         sprite.enabled = true; // アイテムを再表示する
         sphereCollider.enabled = true; // コライダーを再度有効にする
