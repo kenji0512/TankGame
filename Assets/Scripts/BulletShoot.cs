@@ -5,14 +5,14 @@ using UnityEngine;
 public class BulletShoot : MonoBehaviour
 {
     [SerializeField] private float _initialDirectionY = 1.0f; // 初期射出方向
-    [SerializeField] private float _delayTime = 0.5f;
+    [SerializeField] private double _delayTime = 0.5f;
 
     public Transform _shootpoint; // 弾を発射する位置
     public Transform _shootpointR; // 弾を発射する位置
     public Transform _shootpointH; // 弾を発射する位置
     public GameObject _shootEffectPrefab;
     public float shootEffectLifetime = 2f; // 発射エフェクトの寿命（秒）
-    public float cooldownTime = 2.0f;
+    public double cooldownTime = 2.0f;
 
     public PlayerType shooterType;
 

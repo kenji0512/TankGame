@@ -20,9 +20,9 @@ public class TunkController : Character
     private Animator _animator;
     private Rigidbody _rb;
 
-    protected override void Awake()
+    protected override void Start()
     {
-        base.Awake(); // StartではなくAwakeを呼ぶ
+        base.Start(); // StartではなくAwakeを呼ぶ
         _playerInput = GetComponent<PlayerInput>();
         _playerInput.notificationBehavior = PlayerNotifications.InvokeUnityEvents;
         // Player 1用またはPlayer 2用のアクションマップを設定
@@ -46,6 +46,8 @@ public class TunkController : Character
         {
             Debug.LogError($"Action {_shootActionName} is not found in PlayerInput.");
         }
+
+        GameManager.Instance.RegisterPlayer(this);
     }
 
     private void Update()
@@ -80,12 +82,13 @@ public class TunkController : Character
 
     void HandleShooting(InputAction.CallbackContext context)
     {
-        Quaternion rotation = default;
-        if (_bulletShoot == null)
+        if (GameManager.Instance.currentState != GameState.Playing)
         {
-            return; // 処理を中断
+            Debug.Log("ゲーム中じゃないので発射できません！！");
+            return;
         }
-
+        Quaternion rotation = default;
+        if (_bulletShoot == null) return; // 処理を中断
         // プレイヤーの入力に応じて弾を発射
         if (_playerInput.actions[_shootActionName].triggered)
         {
