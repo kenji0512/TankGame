@@ -4,7 +4,8 @@ public enum PlayerType
 }
 public enum GameState
 {
-    Playing,
+    Ready,     // カウントダウン中
+    Playing,    //バトル中
     Paused,
     GameOver
 }

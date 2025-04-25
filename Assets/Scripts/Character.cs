@@ -13,7 +13,7 @@ public class Character : MonoBehaviour
 
     public float _damageAmount { get; set; } = 10;
 
-    protected virtual void Awake()
+    protected virtual void Start()
     {
         currentHealth = maxHealth;
         //_originalDamage = _damageAmount;

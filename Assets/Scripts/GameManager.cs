@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using Cysharp.Threading.Tasks;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement; // シーン管理用
 
@@ -8,19 +9,17 @@ public class GameManager : MonoBehaviour
 
     private bool isGamePaused = false;
     private List<TunkController> _players = new List<TunkController>(); // プレイヤーリストを追加
-    private GameState currentState = GameState.Playing;
+    public GameState currentState = GameState.Playing;
 
-    public GameState CurrentState { get { return currentState; } }
     public delegate void GameEvent();
     public event GameEvent OnGameStarted;
     public event GameEvent OnGamePaused;
     public event GameEvent OnGameResumed;
     public event GameEvent OnGameOver;
 
+    private CountdownManager countdownManager;
 
-    float _timer = 0.0f;
-
-    private void Awake()
+    private async void Awake()
     {
         if (Instance != null && Instance != this)
         {
@@ -31,6 +30,17 @@ public class GameManager : MonoBehaviour
             Instance = this;
             DontDestroyOnLoad(gameObject);
         }
+
+        await UniTask.DelayFrame(1);// シーンロード完了を待つため
+        SetPlayersActive(false);// カウントダウン前にプレイヤー操作を無効化！
+
+        if (countdownManager == null)
+        {
+            countdownManager = FindFirstObjectByType<CountdownManager>();
+        }
+        await countdownManager.StartCountdownAsync();// ← ここでカウントダウン
+        SetPlayersActive(true);// ← カウントダウン終わってからプレイヤー操作ON
+        StartGame();// ← イベント通知など
     }
 
     public void StartGame()
@@ -41,10 +51,22 @@ public class GameManager : MonoBehaviour
         OnGameStarted?.Invoke();
         Debug.Log("Game Started!");
     }
-    public void HitStop(float time)
+    public void SetPlayersActive(bool isActive)
     {
-        _timer = time;
-        Time.timeScale = 0;
+        foreach (TunkController player in _players)
+        {
+            player.enabled = isActive; // 操作スクリプトをON/OFF
+        }
+    }
+    public async UniTaskVoid StartGameWithCountdown()
+    {
+        StartGame(); // 本番開始
+    }
+    public async UniTask HitStopAsync(float time)
+    {
+        Time.timeScale = 0f;
+        await UniTask.Delay((int)(time * 1000), ignoreTimeScale: true);
+        Time.timeScale = 1f;
     }
     public void PauseGame()
     {
