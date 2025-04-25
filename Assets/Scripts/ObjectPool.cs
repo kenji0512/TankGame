@@ -30,12 +30,12 @@ public class ObjectPool : MonoBehaviour
             poolDictionary.Add(pool.tag, objectPool);
         }
     }
-    public GameObject Release(string tag, Vector3 position,Quaternion rotation)
+    public GameObject Release(string tag, Vector3 position, Quaternion rotation)
     {
         if (!poolDictionary.ContainsKey(tag)) return null;
 
         GameObject obj;
-        var objectPool = poolDictionary[tag];
+        Queue<GameObject> objectPool = poolDictionary[tag];
 
         if (objectPool.Count == 0)
         {
@@ -48,13 +48,18 @@ public class ObjectPool : MonoBehaviour
         {
             obj = objectPool.Dequeue();
         }
+        if (obj == null || obj.Equals(null))
+        {
+            Debug.LogWarning($"[ObjectPool] Tried to release a destroyed object for tag {tag}");
+            return null;
+        }
         obj.SetActive(true);
         obj.transform.position = position;
         obj.transform.rotation = rotation;
         Bullet bullet = obj.GetComponent<Bullet>();
         if (bullet != null)
         {
-            bullet.myPool = this; 
+            bullet.myPool = this;
         }
         poolDictionary[tag].Enqueue(obj);
         return obj;
