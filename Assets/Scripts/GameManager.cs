@@ -38,6 +38,7 @@ public class GameManager : MonoBehaviour
         {
             countdownManager = FindFirstObjectByType<CountdownManager>();
         }
+        currentState = GameState.Ready;
         await countdownManager.StartCountdownAsync();// ← ここでカウントダウン
         SetPlayersActive(true);// ← カウントダウン終わってからプレイヤー操作ON
         StartGame();// ← イベント通知など

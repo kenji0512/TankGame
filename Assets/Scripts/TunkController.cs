@@ -87,28 +87,35 @@ public class TunkController : Character
             Debug.Log("ゲーム中じゃないので発射できません！！");
             return;
         }
+
         Quaternion rotation = default;
         if (_bulletShoot == null) return; // 処理を中断
-        // プレイヤーの入力に応じて弾を発射
-        if (_playerInput.actions[_shootActionName].triggered)
+        IShootStrategy strategy = null;
+        string actionName = context.action.name;
+
+        // プレイヤーの入力に応じて通常弾を発射
+        if (actionName == _shootActionName)
         {
-            // 通常弾の発射
-            _bulletShoot.Shoot(playerType, transform.forward,rotation);
+            strategy = new NormalShotStrategy();
             TriggerShootAnimation("shoot");
         }
-
         // ロケット弾の発射（RocketShootアクションに応じて処理）
-        if (context.action.name == "RocketShoot") // ロケット弾の場合のチェック
+        else if (actionName == "RocketShoot")
         {
-            Debug.Log($"Rocket Shoot by {playerType}"); // ロケット弾の発射が呼ばれたことを確認
-            _bulletShoot.RocketShoot(playerType,rotation);
+            strategy = new RocketShotStrategy();
             TriggerShootAnimation("rocketShoot");
         }
         //ホーミング弾が発射
-        if (context.action.name == "HomingShoot")
+        else if (actionName == "HomingShoot")
         {
-            _bulletShoot.HomingMissle(playerType,transform.forward,rotation);
+            strategy = new HomingShotStrategy();
             TriggerShootAnimation("shoot");
+        }
+
+        if (strategy != null)
+        {
+            _bulletShoot.SetStrategy(strategy);
+            _bulletShoot.ShootByStrategy(playerType, transform.forward, transform.rotation);
         }
     }
 
