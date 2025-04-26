@@ -6,11 +6,14 @@ public class TunkController : Character
 {
     public static event Action<TunkController> OnPlayerDied;
     [SerializeField] private BulletShoot _bulletShoot;  // BulletShootコンポーネント
+    [SerializeField] private Transform _turret;
 
     [SerializeField] private string _moveActionName = "Move";
     [SerializeField] private string _shootActionName = "Shoot";
     public float _moveSpeed = 5f; // タンクの移動速度
     public float _turnSpeed = 100f;   // タンクの回転速度
+    public float _turretTurnSpeed = 180f; // 砲塔の回転速度
+
     public PlayerType playerType;    // プレイヤーのタイプ
 
     private PlayerInput _playerInput;
@@ -53,18 +56,19 @@ public class TunkController : Character
     private void Update()
     {
         HandleMovement();
+        HandleTurretRotation();
     }
     public void HandleMovement()
     {
         // ゲームパッドの移動入力を取得
-        Vector2 moveInput = _playerInput.actions[_moveActionName].ReadValue<Vector2>();
+        Vector2 moveInput = _playerInput.actions[_shootActionName].ReadValue<Vector2>();
         float moveDirection = moveInput.y;  // 前後移動
         float turnDirection = moveInput.x;  // 左右回転
 
         MoveTank(moveDirection, turnDirection);
 
         // 状態を更新
-        _currentState = moveDirection != 0 || turnDirection != 0
+        _currentState = moveDirection != 0
             ? _currentState | State.Moving
             : _currentState & ~State.Moving;
     }
@@ -72,13 +76,33 @@ public class TunkController : Character
     private void MoveTank(float moveInput, float turnInput)
     {
         Vector3 moveDirection = transform.forward * moveInput * _moveSpeed * Time.deltaTime;
-        Vector3 newPosition = _rb.position + moveDirection;
-        _rb.MovePosition(newPosition);
+        transform.position += moveDirection;
+        //Vector3 newPosition = _rb.position + moveDirection;
+        //_rb.MovePosition(newPosition);
 
-        float turnAmount = turnInput * _turnSpeed * Time.deltaTime;
-        Quaternion turnRotation = Quaternion.Euler(0f, turnAmount, 0f);
-        _rb.MoveRotation(_rb.rotation * turnRotation);
+        //float turnAmount = turnInput * _turnSpeed * Time.deltaTime;
+        float turnAmount = turnInput * 100f * Time.deltaTime;
+        transform.Rotate(0f, turnAmount, 0f);
+        //Quaternion turnRotation = Quaternion.Euler(0f, turnAmount, 0f);
+        //_rb.MoveRotation(_rb.rotation * turnRotation);
     }//移動処理
+    private void HandleTurretRotation()
+    {
+        if (_turret == null) return;
+        // 右スティックの入力で砲塔の回転
+        Vector2 moveInput = _playerInput.actions["TurretMove"].ReadValue<Vector2>();
+        float turretTurnInput = moveInput.x;  // 左右（旋回）
+
+        float turretTurnAmount = turretTurnInput * _turretTurnSpeed * Time.deltaTime;
+        //if (moveInput.sqrMagnitude > 0.1f)
+        //{
+        //    // 入力方向から角度を計算
+        //    float angle = Mathf.Atan2(moveInput.x, moveInput.y) * Mathf.Rad2Deg;
+        //    Quaternion targetRotation = Quaternion.Euler(0, angle, 0);
+        //    _turret.rotation = Quaternion.RotateTowards(_turret.rotation, targetRotation, _turretTurnSpeed * Time.deltaTime);
+        //}
+        _turret.Rotate(0f, turretTurnAmount, 0f);
+    }
 
     void HandleShooting(InputAction.CallbackContext context)
     {
@@ -133,7 +157,7 @@ public class TunkController : Character
         {
             Debug.LogError("HPバーがアタッチされていません！");
         }
-        hpBar.UpdateHP(currentHealth,maxHealth);
+        hpBar.UpdateHP(currentHealth, maxHealth);
 
         if (IsInvulnerable)
         {

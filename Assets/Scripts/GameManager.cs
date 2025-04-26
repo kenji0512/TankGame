@@ -24,11 +24,13 @@ public class GameManager : MonoBehaviour
         if (Instance != null && Instance != this)
         {
             Destroy(gameObject);
+            return;
         }
         else
         {
             Instance = this;
             DontDestroyOnLoad(gameObject);
+            SceneManager.sceneLoaded += OnSceneLoaded;
         }
 
         await UniTask.DelayFrame(1);// シーンロード完了を待つため
@@ -42,6 +44,23 @@ public class GameManager : MonoBehaviour
         await countdownManager.StartCountdownAsync();// ← ここでカウントダウン
         SetPlayersActive(true);// ← カウントダウン終わってからプレイヤー操作ON
         StartGame();// ← イベント通知など
+    }
+
+    private async void OnSceneLoaded(Scene scene, LoadSceneMode mode)
+    {
+        Debug.Log("Scene loaded: {scene.name}");
+        countdownManager = FindFirstObjectByType<CountdownManager>();
+
+        if (countdownManager != null)
+        {
+            Debug.Log("Countdownmanager foud! Starting countdown...");
+            await UniTask.Delay(1);
+            SetPlayersActive(false);
+            currentState = GameState.Ready;
+            await countdownManager.StartCountdownAsync();
+            SetPlayersActive(true);
+            StartGame();
+        }
     }
 
     public void StartGame()
