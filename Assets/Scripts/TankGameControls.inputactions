@@ -15,6 +15,15 @@
                     "initialStateCheck": true
                 },
                 {
+                    "name": "TurretMove",
+                    "type": "Value",
+                    "id": "883dbe78-ebde-4b55-b71c-6fb4d186517e",
+                    "expectedControlType": "Vector2",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": true
+                },
+                {
                     "name": "Shoot",
                     "type": "Button",
                     "id": "4352c549-86ce-4d25-88c3-07af9f97e46c",
@@ -172,6 +181,17 @@
                     "processors": "",
                     "groups": ";Controll2",
                     "action": "HomingShoot",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "e140dbd1-5782-419e-811f-5c405a023dc0",
+                    "path": "<Gamepad>/rightStick",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": ";Controll2",
+                    "action": "TurretMove",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

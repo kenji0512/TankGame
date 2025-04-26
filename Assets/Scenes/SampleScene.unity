@@ -814,6 +814,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 13a615b7baba07b4ba2846c652ef07cf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  currentState: 1
 --- !u!4 &574939395
 Transform:
   m_ObjectHideFlags: 0
@@ -2313,6 +2314,11 @@ Transform:
   m_Children: []
   m_Father: {fileID: 1433633965}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!4 &1021093605 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 501465414526454141, guid: 4a1b02cd8f796dc4c9d5c5afce18d0f6, type: 3}
+  m_PrefabInstance: {fileID: 1646893648}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1044243611
 GameObject:
   m_ObjectHideFlags: 0
@@ -2660,7 +2666,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2797129902795045934, guid: 00f825b659e52674c89009710471cdba, type: 3}
       propertyPath: m_Name
-      value: TankRed(Enemy)
+      value: TankRed(Player2)
       objectReference: {fileID: 0}
     - target: {fileID: 2797129902795045934, guid: 00f825b659e52674c89009710471cdba, type: 3}
       propertyPath: m_Layer
@@ -2818,6 +2824,10 @@ MonoBehaviour:
       m_Calls: []
     m_ActionId: c0e51e7c-2cf7-4963-9c2c-f2a6ad9511b6
     m_ActionName: 'Player1/HomingShoot[/Keyboard/u,/XInputControllerWindows/buttonNorth]'
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: 883dbe78-ebde-4b55-b71c-6fb4d186517e
+    m_ActionName: 'Player/TurretMove[/XInputControllerWindows/rightStick]'
   m_NeverAutoSwitchControlSchemes: 1
   m_DefaultControlScheme: Controll
   m_DefaultActionMap: Player
@@ -2839,10 +2849,12 @@ MonoBehaviour:
   onPowerUp: 0
   hpBar: {fileID: 1044243613}
   _bulletShoot: {fileID: 220989015}
+  _turret: {fileID: 1021093605}
   _moveActionName: Move
   _shootActionName: Shoot
   _moveSpeed: 5
   _turnSpeed: 100
+  _turretTurnSpeed: 180
   playerType: 0
 --- !u!1 &1136516197
 GameObject:
@@ -4104,6 +4116,11 @@ PrefabInstance:
       insertIndex: -1
       addedObject: {fileID: 1070665796}
   m_SourcePrefab: {fileID: 100100000, guid: 4a1b02cd8f796dc4c9d5c5afce18d0f6, type: 3}
+--- !u!4 &1671871171 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 501465414526454141, guid: 00f825b659e52674c89009710471cdba, type: 3}
+  m_PrefabInstance: {fileID: 1069693994}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1727643258
 GameObject:
   m_ObjectHideFlags: 0
@@ -4526,6 +4543,10 @@ MonoBehaviour:
       m_Calls: []
     m_ActionId: c0e51e7c-2cf7-4963-9c2c-f2a6ad9511b6
     m_ActionName: 'Player1/HomingShoot[/Keyboard/u,/XInputControllerWindows/buttonNorth]'
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: 883dbe78-ebde-4b55-b71c-6fb4d186517e
+    m_ActionName: 'Player/TurretMove[/XInputControllerWindows/rightStick]'
   m_NeverAutoSwitchControlSchemes: 1
   m_DefaultControlScheme: Controll2
   m_DefaultActionMap: Player
@@ -4547,10 +4568,12 @@ MonoBehaviour:
   onPowerUp: 0
   hpBar: {fileID: 989272768}
   _bulletShoot: {fileID: 480498684}
+  _turret: {fileID: 1671871171}
   _moveActionName: Move
   _shootActionName: Shoot
   _moveSpeed: 5
   _turnSpeed: 100
+  _turretTurnSpeed: 180
   playerType: 1
 --- !u!1 &1947588549
 GameObject:
