@@ -12,7 +12,7 @@ public class NormalShotStrategy : IShootStrategy
         //Bullet bullet = bulletObject.GetComponent<Bullet>();
 
         var pool = bulletShoot.BulletPool;
-        var shootPoint = bulletShoot.ShootPoint;
+        Transform shootPoint = bulletShoot.ShootPoint;
 
         GameObject bulletObject = pool.Release("NormalBullet", shootPoint.position, rotation);
         Bullet bullet = bulletObject.GetComponent<Bullet>();
@@ -20,7 +20,7 @@ public class NormalShotStrategy : IShootStrategy
         if (bullet != null)
         {
             bullet.transform.position = shootPoint.position;
-            bullet.transform.rotation = shootPoint.rotation;
+            bullet.transform.rotation = rotation;
             bullet.shooterType = shooterType;
             bullet.SetDirection(direction);
 
