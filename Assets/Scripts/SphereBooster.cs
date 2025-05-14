@@ -14,7 +14,6 @@ public class SphereBooster : Bullet
     // 発射位置を渡して初速度を設定
     public void Initialize(Vector3 initialDirection)
     {
-        //base.Start();//ここのStartはけすべきか
         // 発射方向（shootPointの向いている方向）を取得して、初速度を設定
         _velocity = initialDirection.normalized * _forceMagnitude;
 

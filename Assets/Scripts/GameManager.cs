@@ -125,6 +125,19 @@ public class GameManager : MonoBehaviour
     {
         return isGamePaused;
     }
+    public TunkController GetPlayer(PlayerType playerType)
+    {
+        foreach (var player in _players)
+        {
+            if (player.playerType == playerType)
+            {
+                return player;
+            }
+        }
+
+        Debug.LogWarning($"Player of type {playerType} not found.");
+        return null;
+    }
 
     public void RegisterPlayer(TunkController player)
     {

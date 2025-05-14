@@ -1,55 +1,51 @@
+using DG.Tweening;
 using System;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
 public class TunkController : Character
 {
+    // === Events ===
     public static event Action<TunkController> OnPlayerDied;
-    [SerializeField] private BulletShoot _bulletShoot;  // BulletShootƒRƒ“ƒ|[ƒlƒ“ƒg
-    [SerializeField] private Transform _turret;
 
+    // === Serialized Fields ===
+    [Header("Input Settings")]
+    [SerializeField] private string _turretRotateActionName = "TurretRotate";
     [SerializeField] private string _moveActionName = "Move";
     [SerializeField] private string _shootActionName = "Shoot";
-    public float _moveSpeed = 5f; // ƒ^ƒ“ƒN‚ÌˆÚ“®‘¬“x
-    public float _turnSpeed = 100f;   // ƒ^ƒ“ƒN‚Ì‰ñ“]‘¬“x
-    public float _turretTurnSpeed = 180f; // –C“ƒ‚Ì‰ñ“]‘¬“x
 
-    public PlayerType playerType;    // ƒvƒŒƒCƒ„[‚Ìƒ^ƒCƒv
+    [Header("References")]
+    [SerializeField] private BulletShoot _bulletShoot;
+    [SerializeField] private Transform _turretTransform;
 
+    [Header("Stats")]
+    public float _moveSpeed = 5f;
+    [SerializeField] private float _turnSpeed = 100f;
+    [SerializeField] private float _turretTurnSpeed = 100f;
+
+    // === Public Properties ===
+    public Transform TurretTransform => _turretTransform;
+    public PlayerType playerType;
+
+    // === Private Fields ===
     private PlayerInput _playerInput;
-    private Transform _firePoint;//Transform‚Íprivete‚É‚·‚é
-    private State _currentState = State.Idle; // ƒvƒŒƒCƒ„[‚ÌŒ»İ‚Ìó‘Ô
-    private bool isInvulnerable = false; //ƒAƒCƒeƒ€æ“¾‚É –³“Gtrue ‚É‚È‚é
-    private Animator _animator;
     private Rigidbody _rb;
+    private Animator _animator;
 
+    private State _currentState = State.Idle;
+    private bool isInvulnerable = false;
+
+    // === Unity Events ===
     protected override void Start()
     {
-        base.Start(); // Start‚Å‚Í‚È‚­Awake‚ğŒÄ‚Ô
+        base.Start();
+
+        _rb = GetComponent<Rigidbody>();
+        _animator = GetComponentInChildren<Animator>();
         _playerInput = GetComponent<PlayerInput>();
         _playerInput.notificationBehavior = PlayerNotifications.InvokeUnityEvents;
-        // Player 1—p‚Ü‚½‚ÍPlayer 2—p‚ÌƒAƒNƒVƒ‡ƒ“ƒ}ƒbƒv‚ğİ’è
-        if (playerType == PlayerType.Player1)
-        {
-            _playerInput.SwitchCurrentActionMap("Player");
-        }
-        else if (playerType == PlayerType.Player2)
-        {
-            _playerInput.SwitchCurrentActionMap("Player");
-        }
-        // PlayerInput‚ÌƒCƒxƒ“ƒg“o˜^
-        _playerInput.actions[_shootActionName].performed += HandleShooting;
-        _playerInput.actions["RocketShoot"].performed += HandleShooting;
-        _playerInput.actions["HomingShoot"].performed += HandleShooting;
 
-        _animator = GetComponentInChildren<Animator>();
-        _rb = GetComponent<Rigidbody>();
-
-        if (!_playerInput.actions.Contains(_playerInput.actions[_shootActionName]))
-        {
-            Debug.LogError($"Action {_shootActionName} is not found in PlayerInput.");
-        }
-
+        SetupInputActions();
         GameManager.Instance.RegisterPlayer(this);
     }
 
@@ -58,136 +54,129 @@ public class TunkController : Character
         HandleMovement();
         HandleTurretRotation();
     }
-    public void HandleMovement()
+
+    // === Input Setup ===
+    private void SetupInputActions()
     {
-        // ƒQ[ƒ€ƒpƒbƒh‚ÌˆÚ“®“ü—Í‚ğæ“¾
-        Vector2 moveInput = _playerInput.actions[_shootActionName].ReadValue<Vector2>();
-        float moveDirection = moveInput.y;  // ‘OŒãˆÚ“®
-        float turnDirection = moveInput.x;  // ¶‰E‰ñ“]
+        _playerInput.SwitchCurrentActionMap("Player");
 
-        MoveTank(moveDirection, turnDirection);
+        _playerInput.actions[_shootActionName].performed += HandleShooting;
+        _playerInput.actions["RocketShoot"].performed += HandleShooting;
+        _playerInput.actions["HomingShoot"].performed += HandleShooting;
 
-        // ó‘Ô‚ğXV
-        _currentState = moveDirection != 0
-            ? _currentState | State.Moving
-            : _currentState & ~State.Moving;
+        if (!_playerInput.actions.Contains(_playerInput.actions[_shootActionName]))
+        {
+            Debug.LogError($"Action {_shootActionName} is not found in PlayerInput.");
+        }
     }
 
-    private void MoveTank(float moveInput, float turnInput)
+    // === Movement ===
+    private void HandleMovement()
     {
-        Vector3 moveDirection = transform.forward * moveInput * _moveSpeed * Time.deltaTime;
-        transform.position += moveDirection;
-        //Vector3 newPosition = _rb.position + moveDirection;
-        //_rb.MovePosition(newPosition);
+        Vector2 moveInput = _playerInput.actions[_moveActionName].ReadValue<Vector2>();
+        float moveDirection = moveInput.y;
+        float turnDirection = moveInput.x;
 
-        //float turnAmount = turnInput * _turnSpeed * Time.deltaTime;
-        float turnAmount = turnInput * 100f * Time.deltaTime;
+        Vector3 moveVector = transform.forward * moveDirection * _moveSpeed;
+        _rb.linearVelocity = moveVector;
+
+        float turnAmount = turnDirection * _turnSpeed * Time.deltaTime;
         transform.Rotate(0f, turnAmount, 0f);
-        //Quaternion turnRotation = Quaternion.Euler(0f, turnAmount, 0f);
-        //_rb.MoveRotation(_rb.rotation * turnRotation);
-    }//ˆÚ“®ˆ—
+
+        _currentState = moveDirection != 0 ? _currentState | State.Moving : _currentState & ~State.Moving;
+    }
+
+    // === Turret Control ===
     private void HandleTurretRotation()
     {
-        if (_turret == null) return;
-        // ‰EƒXƒeƒBƒbƒN‚Ì“ü—Í‚Å–C“ƒ‚Ì‰ñ“]
-        Vector2 moveInput = _playerInput.actions["TurretMove"].ReadValue<Vector2>();
-        float turretTurnInput = moveInput.x;  // ¶‰Eiù‰ñj
+        if (_turretTransform == null) return;
 
-        float turretTurnAmount = turretTurnInput * _turretTurnSpeed * Time.deltaTime;
-        //if (moveInput.sqrMagnitude > 0.1f)
-        //{
-        //    // “ü—Í•ûŒü‚©‚çŠp“x‚ğŒvZ
-        //    float angle = Mathf.Atan2(moveInput.x, moveInput.y) * Mathf.Rad2Deg;
-        //    Quaternion targetRotation = Quaternion.Euler(0, angle, 0);
-        //    _turret.rotation = Quaternion.RotateTowards(_turret.rotation, targetRotation, _turretTurnSpeed * Time.deltaTime);
-        //}
-        _turret.Rotate(0f, turretTurnAmount, 0f);
+        float rotateInput = _playerInput.actions[_turretRotateActionName].ReadValue<float>();
+        if (Mathf.Abs(rotateInput) > 0.01f)
+        {
+            float rotationAmount = rotateInput * _turretTurnSpeed * Time.deltaTime;
+            Vector3 currentRotation = _turretTransform.localEulerAngles;
+            currentRotation.y += rotationAmount;
+            _turretTransform.localEulerAngles = currentRotation;
+        }
     }
 
-    void HandleShooting(InputAction.CallbackContext context)
+    // === Shooting ===
+    private void HandleShooting(InputAction.CallbackContext context)
     {
         if (GameManager.Instance.currentState != GameState.Playing)
         {
-            Debug.Log("ƒQ[ƒ€’†‚¶‚á‚È‚¢‚Ì‚Å”­Ë‚Å‚«‚Ü‚¹‚ñII");
+            Debug.Log("ã‚²ãƒ¼ãƒ ä¸­ã§ã¯ãªã„ãŸã‚ç™ºå°„ã§ãã¾ã›ã‚“ã€‚");
             return;
         }
 
-        Quaternion rotation = default;
-        if (_bulletShoot == null) return; // ˆ—‚ğ’†’f
-        IShootStrategy strategy = null;
-        string actionName = context.action.name;
+        if (_bulletShoot == null) return;
 
-        // ƒvƒŒƒCƒ„[‚Ì“ü—Í‚É‰‚¶‚Ä’Êí’e‚ğ”­Ë
-        if (actionName == _shootActionName)
+        IShootStrategy strategy = context.action.name switch
         {
-            strategy = new NormalShotStrategy();
-            TriggerShootAnimation("shoot");
-        }
-        // ƒƒPƒbƒg’e‚Ì”­ËiRocketShootƒAƒNƒVƒ‡ƒ“‚É‰‚¶‚Äˆ—j
-        else if (actionName == "RocketShoot")
-        {
-            strategy = new RocketShotStrategy();
-            TriggerShootAnimation("rocketShoot");
-        }
-        //ƒz[ƒ~ƒ“ƒO’e‚ª”­Ë
-        else if (actionName == "HomingShoot")
-        {
-            strategy = new HomingShotStrategy();
-            TriggerShootAnimation("shoot");
-        }
+            var name when name == _shootActionName => new NormalShotStrategy(),
+            "RocketShoot" => new RocketShotStrategy(),
+            "HomingShoot" => new HomingShotStrategy(),
+            _ => null
+        };
 
-        if (strategy != null)
-        {
-            _bulletShoot.SetStrategy(strategy);
-            _bulletShoot.ShootByStrategy(playerType, transform.forward, transform.rotation);
-        }
-    }
+        if (strategy == null) return;
 
-    private void TriggerShootAnimation(string triggerName)
-    {
-        _animator.SetTrigger(triggerName);
+        string trigger = context.action.name switch
+        {
+            var name when name == _shootActionName => "shoot",
+            "RocketShoot" => "rocketShoot",
+            "HomingShoot" => "shoot",
+            _ => null
+        };
+
+        _animator.SetTrigger(trigger);
         _currentState |= State.Shooting;
+
+        _bulletShoot.SetStrategy(strategy);
+        _bulletShoot.ShootByStrategy(playerType, _turretTransform.forward, _turretTransform.rotation);
     }
 
+    // === Damage & Death ===
     public override void TakeDamage(float damage)
     {
-        Debug.Log($"{gameObject.name} before damage: {currentHealth}");
-        currentHealth -= damage;
-        if (hpBar == null)
-        {
-            Debug.LogError("HPƒo[‚ªƒAƒ^ƒbƒ`‚³‚ê‚Ä‚¢‚Ü‚¹‚ñI");
-        }
-        hpBar.UpdateHP(currentHealth, maxHealth);
-
         if (IsInvulnerable)
         {
-            Debug.Log("–³“Gó‘Ô‚Ì‚½‚ßƒ_ƒ[ƒW‚ğó‚¯‚È‚¢I");
+            Debug.Log("ç„¡æ•µçŠ¶æ…‹ã®ãŸã‚ãƒ€ãƒ¡ãƒ¼ã‚¸ç„¡åŠ¹");
             return;
         }
+
+        currentHealth -= damage;
+        currentHealth = Mathf.Max(0, currentHealth);
+
+        hpBar?.UpdateHP(currentHealth, maxHealth);
+
         if (currentHealth <= 0)
         {
-            currentHealth = 0;  // HP‚ª•‰‚Ì’l‚É‚È‚ç‚È‚¢‚æ‚¤‚É‚·‚é
             Die();
         }
-        _currentState = State.Dead;
     }
 
-    public bool IsInvulnerable
-    {
-        get { return isInvulnerable; }
-        set
-        {
-            isInvulnerable = value;
-            Debug.Log(isInvulnerable ? "–³“Gƒ‚[ƒh ON!" : "–³“Gƒ‚[ƒh OFF!");
-        }
-    }
     protected override void Die()
     {
         Debug.Log($"{gameObject.name} has died.");
         GameManager.Instance.RemovePlayer(this);
         OnPlayerDied?.Invoke(this);
+
         string winner = gameObject.name == "TankBlue(Player)" ? "TankRed(Enemy)" : "TankBlue(Player)";
-        FindAnyObjectByType<GameManager>().CheckWinner(winner);
+        GameManager.Instance.CheckWinner(winner);
+
         base.Die();
+    }
+
+    // === Utility ===
+    public bool IsInvulnerable
+    {
+        get => isInvulnerable;
+        set
+        {
+            isInvulnerable = value;
+            Debug.Log(isInvulnerable ? "ç„¡æ•µãƒ¢ãƒ¼ãƒ‰ ON!" : "ç„¡æ•µãƒ¢ãƒ¼ãƒ‰ OFF!");
+        }
     }
 }
