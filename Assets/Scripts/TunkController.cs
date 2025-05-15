@@ -1,4 +1,3 @@
-using DG.Tweening;
 using System;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -19,12 +18,14 @@ public class TunkController : Character
     [SerializeField] private Transform _turretTransform;
 
     [Header("Stats")]
-    public float _moveSpeed = 5f;
+    public float _defaultMoveSpeed = 5f;
+    public float _moveSpeed;
     [SerializeField] private float _turnSpeed = 100f;
     [SerializeField] private float _turretTurnSpeed = 100f;
 
     // === Public Properties ===
     public Transform TurretTransform => _turretTransform;
+    public bool CanWarp { get; private set; } = true;
     public PlayerType playerType;
 
     // === Private Fields ===
@@ -34,6 +35,7 @@ public class TunkController : Character
 
     private State _currentState = State.Idle;
     private bool isInvulnerable = false;
+    public bool onSpeedUp = false;
 
     // === Unity Events ===
     protected override void Start()
@@ -179,4 +181,11 @@ public class TunkController : Character
             Debug.Log(isInvulnerable ? "無敵モード ON!" : "無敵モード OFF!");
         }
     }
+    public async void PreventWarpForSeconds(float seconds)
+    {
+        CanWarp = false;
+        await Cysharp.Threading.Tasks.UniTask.Delay(System.TimeSpan.FromSeconds(seconds));
+        CanWarp = true;
+    }
 }
+

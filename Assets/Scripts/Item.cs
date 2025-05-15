@@ -66,23 +66,7 @@ public class Item : MonoBehaviour
             }
         }
     }
-    //private void ApplyPowerBoost(TunkController tunkController)
-    //{
-    //    Debug.Log($"{tunkController.name} にパワーアップ適用");
-    //    tunkController.onPowerUp = true;
-    //    originalDamage = tunkController._damageAmount;// 元のパワーを保存
-    //    tunkController._damageAmount += _value;
-    //    StartCoroutine(ResetPowerAfterDuration(tunkController));
-    //}
-    //private IEnumerator ResetPowerAfterDuration(TunkController tunkController)
-    //{
-    //    yield return new WaitForSeconds(_duration);
-    //    tunkController._damageAmount = originalDamage;
-    //    tunkController.onPowerUp = false;
-    //    currentEffect.Stop(); // エフェクトを停止
-    //    Destroy(currentEffect);
-    //    Debug.Log(currentEffect + $"destroy");
-    //}
+
     private async UniTaskVoid ApplyPowerBoost(TunkController tunkController)
     {
         Debug.Log($"{tunkController.name} にパワーアップ適用");
@@ -101,11 +85,14 @@ public class Item : MonoBehaviour
 
     private async UniTaskVoid ApplySpeedBoost(TunkController tunkController)
     {
+        if (tunkController.onSpeedUp) return;
+        tunkController.onSpeedUp = true;
         _originalMoveSpeed = tunkController._moveSpeed; // 元のスピードを保存
         tunkController._moveSpeed *= (1f + (_value / 100f));
 
         await UniTask.Delay(TimeSpan.FromSeconds(_duration));
-        tunkController._moveSpeed = _originalMoveSpeed;
+        tunkController._moveSpeed = tunkController._defaultMoveSpeed;
+        tunkController.onSpeedUp = false;
         currentEffect.Stop(); // エフェクトを停止
         Destroy(currentEffect);
         Debug.Log(currentEffect + $"destroy");
