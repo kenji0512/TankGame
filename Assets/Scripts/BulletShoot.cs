@@ -1,11 +1,13 @@
 using Cysharp.Threading.Tasks;
 using System.Threading.Tasks;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class BulletShoot : MonoBehaviour
 {
     [SerializeField] private float _initialDirectionY = 1.0f; // 初期射出方向
     [SerializeField] private double _delayTime = 0.5f;
+    [SerializeField] private Image _cooldownGauge;
 
     public Transform _shootpoint; // 弾を発射する位置
     public Transform _shootpointR; // 弾を発射する位置
@@ -72,7 +74,35 @@ public class BulletShoot : MonoBehaviour
     public async UniTask StartCooldown()
     {
         canShoot = false;
-        await UniTask.Delay(System.TimeSpan.FromSeconds(cooldownTime));
+
+        // ゲージの初期値（フル）
+        if (_cooldownGauge != null)
+            _cooldownGauge.gameObject.SetActive(false);
+        
+        await UniTask.Delay(100); // 少しだけ非表示のまま待機（演出用）
+
+        if (_cooldownGauge != null)
+        {
+            _cooldownGauge.gameObject.SetActive(true);
+            _cooldownGauge.fillAmount = 0f;
+        }
+
+        float timer = 0f;
+        while (timer < cooldownTime)
+        {
+            timer += Time.deltaTime;
+
+            if (_cooldownGauge != null)
+            {
+                float t = Mathf.Clamp01(timer / (float)cooldownTime);
+                _cooldownGauge.fillAmount = t;
+            }
+
+            await UniTask.Yield(); // フレームごとに待機
+        }
+        if (_cooldownGauge != null)
+            _cooldownGauge.fillAmount = 1f;
+
         canShoot = true;
     }
 }
