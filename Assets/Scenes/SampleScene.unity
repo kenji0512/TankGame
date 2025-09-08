@@ -218,6 +218,11 @@ MeshCollider:
   m_Convex: 1
   m_CookingOptions: 30
   m_Mesh: {fileID: 8658367823866979341, guid: 305fa7a2d7f547c42a0c3f022b0fe53a, type: 3}
+--- !u!23 &68874541 stripped
+MeshRenderer:
+  m_CorrespondingSourceObject: {fileID: 7083082883037784652, guid: 00f825b659e52674c89009710471cdba, type: 3}
+  m_PrefabInstance: {fileID: 1069693994}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &76567765
 GameObject:
   m_ObjectHideFlags: 0
@@ -663,6 +668,24 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 1.5090029, y: 2.2318447, z: 1.5019302}
   m_Center: {x: -0.0046379566, y: 1.185929, z: -0.25096512}
+--- !u!114 &269270244
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 269270238}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 06f16b0509cf03a41ad6fad9703d9380, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  targets:
+  - {fileID: 1650809334}
+  - {fileID: 1021093609}
+  flashColor: {r: 1, g: 0, b: 0, a: 1}
+  flashDuration: 0.255
+  includeChildren: 1
 --- !u!1 &321979921
 GameObject:
   m_ObjectHideFlags: 0
@@ -1055,6 +1078,24 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 1.5090029, y: 2.2318447, z: 1.5019302}
   m_Center: {x: -0.0046379566, y: 1.185929, z: -0.25096512}
+--- !u!114 &611997370
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 611997364}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 06f16b0509cf03a41ad6fad9703d9380, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  targets:
+  - {fileID: 68874541}
+  - {fileID: 1671871175}
+  flashColor: {r: 1, g: 0, b: 0, a: 1}
+  flashDuration: 0.255
+  includeChildren: 1
 --- !u!1 &612607081
 GameObject:
   m_ObjectHideFlags: 0
@@ -2372,6 +2413,11 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 0.018828698, y: 0.030019501, z: 0.039911773}
   m_Center: {x: -0.00006789848, y: 0.0338383, z: 0.0075898613}
+--- !u!23 &1021093609 stripped
+MeshRenderer:
+  m_CorrespondingSourceObject: {fileID: 2242236535545680827, guid: 4a1b02cd8f796dc4c9d5c5afce18d0f6, type: 3}
+  m_PrefabInstance: {fileID: 1646893648}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1044243611
 GameObject:
   m_ObjectHideFlags: 0
@@ -2876,6 +2922,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 3030939051835745956, guid: 00f825b659e52674c89009710471cdba, type: 3}
       insertIndex: -1
       addedObject: {fileID: 611997367}
+    - targetCorrespondingSourceObject: {fileID: 3030939051835745956, guid: 00f825b659e52674c89009710471cdba, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 611997370}
     - targetCorrespondingSourceObject: {fileID: 1560700026022665346, guid: 00f825b659e52674c89009710471cdba, type: 3}
       insertIndex: -1
       addedObject: {fileID: 68874539}
@@ -2993,6 +3042,7 @@ MonoBehaviour:
   _shootActionName: Shoot
   _bulletShoot: {fileID: 1646893650}
   _turretTransform: {fileID: 1021093605}
+  damageFlash: {fileID: 269270244}
   _defaultMoveSpeed: 5
   _moveSpeed: 5
   _turnSpeed: 100
@@ -4464,6 +4514,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 3030939051835745956, guid: 4a1b02cd8f796dc4c9d5c5afce18d0f6, type: 3}
       insertIndex: -1
       addedObject: {fileID: 269270241}
+    - targetCorrespondingSourceObject: {fileID: 3030939051835745956, guid: 4a1b02cd8f796dc4c9d5c5afce18d0f6, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 269270244}
     - targetCorrespondingSourceObject: {fileID: 1560700026022665346, guid: 4a1b02cd8f796dc4c9d5c5afce18d0f6, type: 3}
       insertIndex: -1
       addedObject: {fileID: 1650809332}
@@ -4534,6 +4587,11 @@ MeshCollider:
   m_Convex: 1
   m_CookingOptions: 30
   m_Mesh: {fileID: 8658367823866979341, guid: 305fa7a2d7f547c42a0c3f022b0fe53a, type: 3}
+--- !u!23 &1650809334 stripped
+MeshRenderer:
+  m_CorrespondingSourceObject: {fileID: 7083082883037784652, guid: 4a1b02cd8f796dc4c9d5c5afce18d0f6, type: 3}
+  m_PrefabInstance: {fileID: 1646893648}
+  m_PrefabAsset: {fileID: 0}
 --- !u!4 &1671871171 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 501465414526454141, guid: 00f825b659e52674c89009710471cdba, type: 3}
@@ -4560,6 +4618,11 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 0.018828698, y: 0.030019501, z: 0.039911773}
   m_Center: {x: -0.00006789848, y: 0.0338383, z: 0.0075898613}
+--- !u!23 &1671871175 stripped
+MeshRenderer:
+  m_CorrespondingSourceObject: {fileID: 2242236535545680827, guid: 00f825b659e52674c89009710471cdba, type: 3}
+  m_PrefabInstance: {fileID: 1069693994}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1727643258
 GameObject:
   m_ObjectHideFlags: 0
@@ -5142,6 +5205,7 @@ MonoBehaviour:
   _shootActionName: Shoot
   _bulletShoot: {fileID: 1069693996}
   _turretTransform: {fileID: 1671871171}
+  damageFlash: {fileID: 611997370}
   _defaultMoveSpeed: 5
   _moveSpeed: 5
   _turnSpeed: 100

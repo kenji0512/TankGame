@@ -1,6 +1,9 @@
+using Cysharp.Threading.Tasks;
+using DG.Tweening;
 using System;
 using UnityEngine;
 using UnityEngine.InputSystem;
+
 
 public class TunkController : Character
 {
@@ -16,6 +19,8 @@ public class TunkController : Character
     [Header("References")]
     [SerializeField] private BulletShoot _bulletShoot;
     [SerializeField] private Transform _turretTransform;
+    [SerializeField] private DamageFlash damageFlash;
+
 
     [Header("Stats")]
     public float _defaultMoveSpeed = 5f;
@@ -97,7 +102,6 @@ public class TunkController : Character
             );
             moveInput = _smoothedMoveInput;
         }
-        Debug.Log(moveInput);
 
         float moveDirection = moveInput.y;
         float turnDirection = moveInput.x;
@@ -163,7 +167,7 @@ public class TunkController : Character
     }
 
     // === Damage & Death ===
-    public override void TakeDamage(float damage)
+    public override async void TakeDamage(float damage)
     {
         if (IsInvulnerable)
         {
@@ -175,7 +179,16 @@ public class TunkController : Character
         currentHealth = Mathf.Max(0, currentHealth);
 
         hpBar?.UpdateHP(currentHealth, maxHealth);
-
+        transform.DOShakePosition(0.2f, 0.3f, 20, 90, false, true);
+        var token = this.GetCancellationTokenOnDestroy();
+        if (damageFlash != null)
+        {
+            await damageFlash.FlashAsync(token);
+        }
+        else
+        {
+            Debug.LogWarning("DamageFlash が未割り当てです。インスペクタで設定してください。");
+        }
         if (currentHealth <= 0)
         {
             Die();
