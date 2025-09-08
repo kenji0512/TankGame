@@ -4,7 +4,6 @@ using System;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-
 public class TunkController : Character
 {
     // === Events ===
@@ -19,19 +18,21 @@ public class TunkController : Character
     [Header("References")]
     [SerializeField] private BulletShoot _bulletShoot;
     [SerializeField] private Transform _turretTransform;
-    [SerializeField] private DamageFlash damageFlash;
-
+    [SerializeField] private DamageFlash _damageFlash;
 
     [Header("Stats")]
-    public float _defaultMoveSpeed = 5f;
     public float _moveSpeed;
+    public float _defaultMoveSpeed = 5f;
+
     [SerializeField] private float _turnSpeed = 100f;
     [SerializeField] private float _turretTurnSpeed = 100f;
+    [SerializeField] private float _inputSmoothSpeed = 10f;
 
     // === Public Properties ===
     public Transform TurretTransform => _turretTransform;
     public bool CanWarp { get; private set; } = true;
     public PlayerType playerType;
+    public bool onSpeedUp = false;
 
     // === Private Fields ===
     private PlayerInput _playerInput;
@@ -39,12 +40,9 @@ public class TunkController : Character
     private Animator _animator;
 
     private State _currentState = State.Idle;
-    private bool isInvulnerable = false;
+    private bool _isInvulnerable = false;
     private int _skipMoveFrames = 0;
-    public bool onSpeedUp = false;
     private Vector2 _smoothedMoveInput = Vector2.zero;
-
-    [SerializeField] private float _inputSmoothSpeed = 10f; // 補間スピード
 
     // === Unity Events ===
     protected override void Start()
@@ -55,6 +53,8 @@ public class TunkController : Character
         _animator = GetComponentInChildren<Animator>();
         _playerInput = GetComponent<PlayerInput>();
         _playerInput.notificationBehavior = PlayerNotifications.InvokeUnityEvents;
+
+        _moveSpeed = _defaultMoveSpeed;
 
         SetupInputActions();
         GameManager.Instance.RegisterPlayer(this);
@@ -90,9 +90,9 @@ public class TunkController : Character
             _rb.linearVelocity = Vector3.zero;
             return;
         }
+
         Vector2 rawInput = _playerInput.actions[_moveActionName].ReadValue<Vector2>();
         Vector2 moveInput = rawInput;
-        // Player1 のときだけスムージング
         if (playerType == PlayerType.Player1)
         {
             _smoothedMoveInput = Vector2.Lerp(
@@ -102,6 +102,9 @@ public class TunkController : Character
             );
             moveInput = _smoothedMoveInput;
         }
+
+
+        if (playerType == PlayerType.Player1) _smoothedMoveInput = moveInput;
 
         float moveDirection = moveInput.y;
         float turnDirection = moveInput.x;
@@ -121,24 +124,18 @@ public class TunkController : Character
         if (_turretTransform == null) return;
 
         float rotateInput = _playerInput.actions[_turretRotateActionName].ReadValue<float>();
-        if (Mathf.Abs(rotateInput) > 0.01f)
-        {
-            float rotationAmount = rotateInput * _turretTurnSpeed * Time.deltaTime;
-            Vector3 currentRotation = _turretTransform.localEulerAngles;
-            currentRotation.y += rotationAmount;
-            _turretTransform.localEulerAngles = currentRotation;
-        }
+        if (Mathf.Abs(rotateInput) < 0.01f) return;
+
+        float rotationAmount = rotateInput * _turretTurnSpeed * Time.deltaTime;
+        Vector3 currentRotation = _turretTransform.localEulerAngles;
+        currentRotation.y += rotationAmount;
+        _turretTransform.localEulerAngles = currentRotation;
     }
 
     // === Shooting ===
     private void HandleShooting(InputAction.CallbackContext context)
     {
-        if (GameManager.Instance.currentState != GameState.Playing)
-        {
-            Debug.Log("ゲーム中ではないため発射できません。");
-            return;
-        }
-
+        if (GameManager.Instance.currentState != GameState.Playing) return;
         if (_bulletShoot == null) return;
 
         IShootStrategy strategy = context.action.name switch
@@ -169,30 +166,19 @@ public class TunkController : Character
     // === Damage & Death ===
     public override async void TakeDamage(float damage)
     {
-        if (IsInvulnerable)
-        {
-            Debug.Log("無敵状態のためダメージ無効");
-            return;
-        }
+        if (IsInvulnerable) return;
 
-        currentHealth -= damage;
-        currentHealth = Mathf.Max(0, currentHealth);
+        currentHealth = Mathf.Max(0, currentHealth - damage);
 
         hpBar?.UpdateHP(currentHealth, maxHealth);
         transform.DOShakePosition(0.2f, 0.3f, 20, 90, false, true);
-        var token = this.GetCancellationTokenOnDestroy();
-        if (damageFlash != null)
+
+        if (_damageFlash != null)
         {
-            await damageFlash.FlashAsync(token);
+            await _damageFlash.FlashAsync(this.GetCancellationTokenOnDestroy());
         }
-        else
-        {
-            Debug.LogWarning("DamageFlash が未割り当てです。インスペクタで設定してください。");
-        }
-        if (currentHealth <= 0)
-        {
-            Die();
-        }
+
+        if (currentHealth <= 0) Die();
     }
 
     protected override void Die()
@@ -210,26 +196,26 @@ public class TunkController : Character
     // === Utility ===
     public bool IsInvulnerable
     {
-        get => isInvulnerable;
+        get => _isInvulnerable;
         set
         {
-            isInvulnerable = value;
-            Debug.Log(isInvulnerable ? "無敵モード ON!" : "無敵モード OFF!");
+            _isInvulnerable = value;
+            Debug.Log(_isInvulnerable ? "無敵モード ON!" : "無敵モード OFF!");
         }
     }
+
     public async void PreventWarpForSeconds(float seconds)
     {
         CanWarp = false;
-        await Cysharp.Threading.Tasks.UniTask.Delay(System.TimeSpan.FromSeconds(seconds));
+        await UniTask.Delay(TimeSpan.FromSeconds(seconds));
         CanWarp = true;
     }
+
     public void ResetMovement()
     {
         _rb.linearVelocity = Vector3.zero;
         _rb.angularVelocity = Vector3.zero;
         _currentState = State.Idle;
-
         _skipMoveFrames = 2;
     }
 }
-
