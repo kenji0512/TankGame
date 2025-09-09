@@ -7,7 +7,7 @@ public class Character : MonoBehaviour
     protected float currentHealth;
 
     public bool onPowerUp = false;  // アイテム取得時に パワーアップtrue になる
-    public HPBar hpBar;
+    [SerializeField] protected HPBar hpBar; // InspectorでUIを紐付ける
 
 
     public float _damageAmount { get; set; } = 10;
@@ -15,7 +15,7 @@ public class Character : MonoBehaviour
     protected virtual void Start()
     {
         currentHealth = maxHealth;
-        //_originalDamage = _damageAmount;
+        if (hpBar != null) hpBar.UpdateHP(currentHealth, maxHealth);
         Debug.Log($"{gameObject.name} Initial Health: {currentHealth}"); // 初期体力のログ表示
     }
 
