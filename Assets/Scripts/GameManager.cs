@@ -19,6 +19,11 @@ public class GameManager : MonoBehaviour
 
     private CountdownManager countdownManager;
 
+    [Header("BGM Clips")]
+    [SerializeField] private AudioClip titleBGM;
+    [SerializeField] private AudioClip battleBGM;
+    [SerializeField] private AudioClip resultBGM;
+
     private async void Awake()
     {
         if (Instance != null && Instance != this)
@@ -44,6 +49,8 @@ public class GameManager : MonoBehaviour
         await countdownManager.StartCountdownAsync();// ← ここでカウントダウン
         SetPlayersActive(true);// ← カウントダウン終わってからプレイヤー操作ON
         StartGame();// ← イベント通知など
+        SceneManager.sceneLoaded -= OnSceneLoaded; // 二重登録防止
+        SceneManager.sceneLoaded += OnSceneLoaded;
     }
 
     private async void OnSceneLoaded(Scene scene, LoadSceneMode mode)
@@ -51,6 +58,20 @@ public class GameManager : MonoBehaviour
         Debug.Log("Scene loaded: {scene.name}");
         countdownManager = FindFirstObjectByType<CountdownManager>();
 
+        // シーンごとのBGM設定
+        switch (scene.name)
+        {
+            case "StartScene":
+                BGMManager.Instance.PlayBGM(titleBGM, 1.5f);
+                break;
+            case "SampleScene":
+                BGMManager.Instance.PlayBGM(battleBGM, 1.5f);
+                break;
+            case "Player1WinScene":
+            case "Player2WinScene":
+                BGMManager.Instance.PlayBGM(resultBGM, 1.5f);
+                break;
+        }
         if (countdownManager != null)
         {
             Debug.Log("Countdownmanager foud! Starting countdown...");
@@ -61,6 +82,7 @@ public class GameManager : MonoBehaviour
             SetPlayersActive(true);
             StartGame();
         }
+
     }
 
     public void StartGame()
