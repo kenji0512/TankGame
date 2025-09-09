@@ -5,6 +5,7 @@ TagManager:
   serializedVersion: 3
   tags:
   - BreakableWall
+  - Bullet
   layers:
   - Default
   - TransparentFX
