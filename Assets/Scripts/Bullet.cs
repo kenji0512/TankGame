@@ -13,6 +13,7 @@ public class Bullet : MonoBehaviour
 
     public PlayerType shooterType; // 発射者のプレイヤータイプ
     public ObjectPool myPool; // プールから渡しておく
+    public string poolTag;
 
     private Vector3 _direction;  // 弾の移動方向
     private CancellationTokenSource _cancellationTokenSource;
@@ -31,9 +32,7 @@ public class Bullet : MonoBehaviour
         {
             await UniTask.Delay(TimeSpan.FromSeconds(_lifetime), cancellationToken: token);
             if (gameObject.activeInHierarchy)
-            {
                 ReturnToPool();
-            }
         }
         catch (OperationCanceledException)
         {
@@ -45,17 +44,6 @@ public class Bullet : MonoBehaviour
         _cancellationTokenSource?.Cancel();
         _cancellationTokenSource?.Dispose();
     }
-
-    public float BulletdamageAmount { get => _bulletdamageAmount; set => _bulletdamageAmount = value; }
-
-    protected virtual void Start()
-    {
-        if (myPool == null)
-        {
-            Debug.LogWarning($"Bullet: myPool が未設定です（{gameObject.name}）");
-        }
-        //StartCoroutine(AutoReturnToPool());
-    }
     public void SetDirection(Vector3 direction)
     {
         _direction = direction.normalized; // 弾の移動方向を正規化
@@ -66,6 +54,17 @@ public class Bullet : MonoBehaviour
         _direction = _direction.normalized;
         transform.position += _direction * _speed * Time.deltaTime;
     }
+    public float BulletdamageAmount { get => _bulletdamageAmount; set => _bulletdamageAmount = value; }
+
+    protected virtual void Start()
+    {
+        if (myPool == null)
+        {
+            Debug.LogWarning($"Bullet: myPool が未設定です（{gameObject.name}）");
+        }
+        //StartCoroutine(AutoReturnToPool());
+    }
+
 
     protected void OnTriggerEnter(Collider other)
     {
@@ -73,7 +72,13 @@ public class Bullet : MonoBehaviour
         {
             Debug.Log($"[DEBUG] {gameObject.name} hit {other.name}");
 
+
             TunkController hitPlayer = other.GetComponentInParent<TunkController>(); // プレイヤーがタグ付きであればコンポーネント取得
+                                                                                     // 衝突したらプールに戻す
+            //if (myPool != null)
+            //{
+            //    myPool.Catch(poolTag, gameObject);
+            //}
             if (hitPlayer == null)
             {
                 Debug.LogError("ヒットしたオブジェクトが TunkController を持っていません！");
@@ -82,8 +87,8 @@ public class Bullet : MonoBehaviour
             if (hitPlayer != null && hitPlayer.playerType != shooterType)
             {
                 HandleCharacterCollision(hitPlayer);
-                ReturnToPool();
             }
+            ReturnToPool();
         }
         else if (other.CompareTag("BreakableWall"))
         {
@@ -127,12 +132,21 @@ public class Bullet : MonoBehaviour
     {
         if (myPool != null)
         {
-            myPool.Catch("NormalBullet", gameObject);
+            gameObject.SetActive(false); // inactive にする
+            myPool.Catch(poolTag, gameObject);
         }
         else
         {
             Debug.LogWarning("myPool is null, destroying instead.");
             Destroy(gameObject);
+        }
+    }
+    private void OnBecameInvisible()
+    {
+        // 画面外に出たら戻す場合も同様
+        if (myPool != null)
+        {
+            myPool.Catch(poolTag, gameObject);
         }
     }
 }
