@@ -93,6 +93,7 @@ public class TunkController : Character
 
         Vector2 rawInput = _playerInput.actions[_moveActionName].ReadValue<Vector2>();
         Vector2 moveInput = rawInput;
+        //入力を０か１で認識するのではなく途中の数値を受け取ることによってカクつきを軽減
         if (playerType == PlayerType.Player1)
         {
             _smoothedMoveInput = Vector2.Lerp(
