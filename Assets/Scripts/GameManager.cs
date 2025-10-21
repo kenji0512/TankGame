@@ -62,14 +62,14 @@ public class GameManager : MonoBehaviour
         switch (scene.name)
         {
             case "StartScene":
-                BGMManager.Instance.PlayBGM(titleBGM, 1.5f);
+                AudioManager.Instance.PlayBGM(BGMType.Title);
                 break;
             case "SampleScene":
-                BGMManager.Instance.PlayBGM(battleBGM, 1.5f);
+                AudioManager.Instance.PlayBGM(BGMType.Battle);
                 break;
             case "Player1WinScene":
             case "Player2WinScene":
-                BGMManager.Instance.PlayBGM(resultBGM, 1.5f);
+                AudioManager.Instance.PlayBGM(BGMType.Result);
                 break;
         }
         if (countdownManager != null)

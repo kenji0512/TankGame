@@ -17,5 +17,11 @@ public enum State
     Shooting = 1 << 1,
     Dead = 1 << 2
 }
+public enum BGMType
+{
+    Title,
+    Battle,
+    Result
+}
 
 //ŽžŠÔ‚É‚Ü‚Â‚í‚éŒ^‚Ífloat‚¶‚á‚È‚­‚Ädoble‚É‚·‚é‚Ì‚ª‚¢‚¢

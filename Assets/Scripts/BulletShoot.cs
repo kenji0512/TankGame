@@ -18,6 +18,11 @@ public class BulletShoot : MonoBehaviour
 
     public PlayerType shooterType;
     private IShootStrategy _currentStrategy;
+
+    [Header("サウンド設定")]
+    [SerializeField] private AudioClip _shootSE;        // 発射SE
+    [SerializeField] private AudioSource _audioSource;  // 再生用AudioSource
+
     public void SetStrategy(IShootStrategy strategy)
     {
         _currentStrategy = strategy;
@@ -31,6 +36,16 @@ public class BulletShoot : MonoBehaviour
         if (_currentStrategy != null && canShoot)
         {
             _currentStrategy.Shoot(this, shooterType, direction, rotation);
+            
+            //発射SEを鳴らす
+            PlayShootSound();
+        }
+    }
+    private void PlayShootSound()
+    {
+        if (_audioSource != null && _shootSE != null)
+        {
+            _audioSource.PlayOneShot(_shootSE);
         }
     }
     // 既存のフィールドやメソッドは公開プロパティとしてアクセスさせる
@@ -60,6 +75,9 @@ public class BulletShoot : MonoBehaviour
         {
             Debug.LogError("_shootpoint is not assigned.");
         }
+
+        if (_audioSource == null)
+            _audioSource = GetComponent<AudioSource>();
     }
 
     public async Task PlayShootEffectAsync(Vector3 position, Quaternion rotation)

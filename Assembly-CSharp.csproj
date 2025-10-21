@@ -64,11 +64,13 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Assets\Scripts\Itempack.cs" />
+    <Compile Include="Assets\Scripts\AudioSettingsUI.cs" />
     <Compile Include="Assets\Scripts\Enum.cs" />
     <Compile Include="Assets\Scripts\CreateSpriteObject.cs" />
     <Compile Include="Assets\Scripts\Character.cs" />
     <Compile Include="Assets\Scripts\HPBar.cs" />
     <Compile Include="Assets\Scripts\TunkController.cs" />
+    <Compile Include="Assets\Scripts\AudioManager.cs" />
     <Compile Include="Assets\Scripts\HomingMissile.cs" />
     <Compile Include="Assets\Scripts\HomingShotStrategy.cs" />
     <Compile Include="Assets\Scripts\Enemy.cs" />
@@ -76,11 +78,11 @@
     <Compile Include="Assets\Scripts\PlayerManager.cs" />
     <Compile Include="Assets\FXIFIED\common\Scripts\PlayerController.cs" />
     <Compile Include="Assets\Scripts\BulletShoot.cs" />
-    <Compile Include="Assets\Scripts\BGMManager.cs" />
     <Compile Include="Assets\NetcodePlus\Scripts\Tools\WebTool.cs" />
     <Compile Include="Assets\Scripts\NormalShotStrategy .cs" />
     <Compile Include="Assets\Scripts\Item.cs" />
     <Compile Include="Assets\FXIFIED\common\Scripts\PowerUp.cs" />
+    <Compile Include="Assets\Scripts\SEVolumeSlider.cs" />
     <Compile Include="Assets\Scripts\RocketShotStrategy.cs" />
     <Compile Include="Assets\FXIFIED\common\Scripts\Quit.cs" />
     <Compile Include="Assets\Scripts\SphereBooster.cs" />
