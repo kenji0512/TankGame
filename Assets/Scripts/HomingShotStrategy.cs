@@ -11,16 +11,15 @@ public class HomingShotStrategy : IShootStrategy
         Transform shootPoint = bulletShoot.ShootPointH;
         string tag = shooterType == PlayerType.Player1 ? "HomingBullet_Blue" : "HomingBullet_Red";
         GameObject bulletObject = bulletShoot.BulletPool.Release(tag, shootPoint.position, rotation);
+        if (bulletObject == null) return; // プール切れ
 
-        if (bulletObject != null)
+        HomingMissile missile = bulletObject.GetComponent<HomingMissile>();
+
+        if (missile != null)
         {
-            HomingMissile missile = bulletObject.GetComponent<HomingMissile>();
-            if (missile != null)
-            {
-                missile.Initialize(shooterType);
-                bulletShoot.PlayShootEffectAsync(shootPoint.position, shootPoint.rotation);
-                bulletShoot.StartCooldown().Forget();
-            }
+            missile.Initialize(shooterType);
         }
+        bulletShoot.PlayShootEffectAsync(shootPoint.position, shootPoint.rotation);
+        bulletShoot.StartCooldown().Forget();
     }
 }

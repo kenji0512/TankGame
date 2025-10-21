@@ -34,49 +34,55 @@ public class ObjectPool : MonoBehaviour
     {
         if (!poolDictionary.ContainsKey(tag)) return null;
 
-        GameObject obj;
         Queue<GameObject> objectPool = poolDictionary[tag];
+        GameObject obj = null;
 
-        if (objectPool.Count == 0)
-        {
-            Pool poolConfing = pools.Find(p => p.tag == tag);
-            if (poolConfing == null) return null;
-
-            obj = Instantiate(poolConfing.prefab);
-        }
-        else
+        while (objectPool.Count > 0)
         {
             obj = objectPool.Dequeue();
+            if (obj != null) break; // 有効なら使う
         }
-        if (obj == null || obj.Equals(null))
+        if (obj == null)
         {
-            Debug.LogWarning($"[ObjectPool] Tried to release a destroyed object for tag {tag}");
-            return null;
+            Pool poolConfig = pools.Find(p => p.tag == tag);
+            if (poolConfig == null) return null;
+            obj = Instantiate(poolConfig.prefab);
         }
-        obj.SetActive(true);
+
         obj.transform.position = position;
         obj.transform.rotation = rotation;
+
+        // --- トレイルをリセットする部分を追加 ---
+        TrailRenderer trail = obj.GetComponent<TrailRenderer>();
+        if (trail != null)
+        {
+            trail.Clear(); // 残像を消す
+        }
+        obj.SetActive(true);
+
         Bullet bullet = obj.GetComponent<Bullet>();
         if (bullet != null)
         {
             bullet.myPool = this;
+            bullet.poolTag = tag;
         }
-        poolDictionary[tag].Enqueue(obj);
+
         return obj;
-    }
+    }//弾を取り出して発射するだけ
     public void Catch(string tag, GameObject obj)
     {
-        if (obj == null) return; // nullチェックを必ず！
+        if (obj == null) return;
 
         if (poolDictionary.ContainsKey(tag))
         {
+            Debug.LogWarning($"Bullet had no pool, but tried to return: {gameObject.name}");
             obj.SetActive(false);
             poolDictionary[tag].Enqueue(obj);
-            return;
-        }else
+        }
+        else
         {
             Debug.LogWarning($"No pool found for tag: {tag}");
-
+            Destroy(obj);
         }
-    }
+    }//弾を使い終わったらプールに戻す
 }
